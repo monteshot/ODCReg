@@ -23,10 +23,14 @@ namespace VrachMedcentr
 
         public conBD()
         {
+            //server = "shostka.mysql.ukraine.com.ua";
+            //database = "shostka_odc";
+            //UserID = "shostka_odc";
+            //Password = "Cpu1234Pro";
             server = "shostka.mysql.ukraine.com.ua";
-            database = "shostka_odc";
-            UserID = "shostka_odc";
-            Password = "Cpu1234Pro";
+            database = "shostka_medcen";
+            UserID = "shostka_medcen";
+            Password = "n5t7jzqv";
         }
         #region Helpers Methods
         /// <summary>
