@@ -224,6 +224,7 @@
                                 <RowDefinition/>
 
                             </Grid.RowDefinitions>
+                    <Button Command="{Binding Test}"></Button>
                             <!--<TextBlock FontSize="15" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Text="Підсумковий результат:" FontWeight="Bold"/>
                             <StackPanel Grid.Row="1" Orientation="Vertical">
                                 <TextBlock FontSize="15" TextAlignment="Left" VerticalAlignment="Center" Text="Лікар:" />

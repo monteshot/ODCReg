@@ -34,6 +34,8 @@ namespace VrachMedcentr
         private ObservableCollection<Users> ListOfUsers;//переменная для считыванья списка юзверей единожди при запуске програмы
         public ObservableCollection<DateTime> Otemp { get; set; }
         private Users SelectedUser;
+
+   
         #endregion
 
         #region Public Variables
@@ -269,13 +271,17 @@ namespace VrachMedcentr
                         }
                     }
                     //if (SelectedDocNames.docTimeId == "0" && SelectedDocNames.docTimeId == null || WorkingDays.Contains(DateDoctorAcepting)==false)
-
                     Appointments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+
                     //TimeHour = value.docBool; // присваивать значение с статуса врача
                     // КОСТІЛЬ ПЕРЕДЕЛАТЬ ИЗМЕНИТЬ СЧИТІВАНЬЕ ЛИСТА С СПЕЦИФИКАЦИЯМИ И ВРАЧАМИ (Спросить у ИЛЬИ)
 
                 }
-                catch { }
+                catch (Exception e)
+
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
         }
 
@@ -284,7 +290,7 @@ namespace VrachMedcentr
 
         #region Helpers object
         conBD con = new conBD();
-
+        conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
         #endregion
 
         #region Constructor
@@ -296,6 +302,8 @@ namespace VrachMedcentr
              DateDoctorAcepting = DateTime.Today;
             ListOfSpecf = con.getList();
             ListOfUsers = con.GetUsers();
+           
+
             // DateDoctorAcepting = DateTime.Parse("2017-07-07");
 
 
@@ -613,6 +621,8 @@ namespace VrachMedcentr
         }
 
 
+
+
         /// <summary>
         /// команда на биндинг события для изменения сосотояния чекбокса с ЗАНЕСЕНИЕМ ИЗМЕЕНИЙ В БАЗУ
         /// </summary>
@@ -651,9 +661,16 @@ namespace VrachMedcentr
                 return _test ??
                   (_test = new RelayCommand(obj =>
                   {
-                      //CheckBoxChanged();
-                      MessageBox.Show("sasdasdasd");
-                      string fasfgafs = "fasgfa";
+                      ObservableCollection<Appointments> LocalAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
+                      ObservableCollection<Appointments> WebAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
+                      WebAppoinments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+                      LocalAppoinments = conLocal.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+
+                      var result = WebAppoinments.Where(p => !LocalAppoinments.Any(l => p.IDUser == l.IDUser));
+
+                      Appointments = (ObservableCollection<Appointments>)result;
+
+                      int a = 0;
                   }));
             }
         }

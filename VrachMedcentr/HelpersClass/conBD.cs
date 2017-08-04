@@ -21,17 +21,30 @@ namespace VrachMedcentr
         string Password;
         private string stat;
 
+        #region Constructors
+
         public conBD()
         {
-            //server = "shostka.mysql.ukraine.com.ua";
-            //database = "shostka_odc";
-            //UserID = "shostka_odc";
-            //Password = "Cpu1234Pro";
             server = "shostka.mysql.ukraine.com.ua";
-            database = "shostka_medcen";
-            UserID = "shostka_medcen";
-            Password = "n5t7jzqv";
+            database = "shostka_odc";
+            UserID = "shostka_odc";
+            Password = "Cpu1234Pro";
+            //server = "shostka.mysql.ukraine.com.ua";
+            //database = "shostka_medcen";
+            //UserID = "shostka_medcen";
+            //Password = "n5t7jzqv";
         }
+
+        public conBD(string _server, string _database, string _UserID, string _Password)
+        {
+            server = _server;
+            database = _database;
+            UserID = _UserID;
+            Password = _Password;
+        }
+
+        #endregion
+
         #region Helpers Methods
         /// <summary>
         /// функция проверки наличия интернет соединения
@@ -904,13 +917,8 @@ namespace VrachMedcentr
         #endregion
 
 
-        public conBD(string Server, string Database, string userid, string pass)
-        {
-            server = Server;
-            database = Database;
-            UserID = userid;
-            Password = pass;
-        }
+
+
 
 
     }
