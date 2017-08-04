@@ -362,9 +362,9 @@
                     </ControlTemplate>
                 </ListBox.Template>
             </ListBox>
-            <DataGrid x:Name="datatable" ItemsSource="{Binding localBD}"  Margin="-380,136,0,10" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Left" Width="557"/>
+            <!--<DataGrid x:Name="datatable" ItemsSource="{Binding localBD}"  Margin="-380,136,0,10" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Left" Width="557"/>
             <DataGrid x:Name="datatable_Copy" ItemsSource="{Binding siteBD}"  Margin="266,136,10,10" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1"/>
-            <DataGrid x:Name="datatable_Copy1" ItemsSource="{Binding resultBD}"  Margin="-129,55,239,448" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.RowSpan="2"/>
+            <DataGrid x:Name="datatable_Copy1" ItemsSource="{Binding resultBD}"  Margin="-129,55,239,448" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.RowSpan="2"/>-->
             <!--<DataGrid  Margin="0,10,0,0" FontSize="15" Foreground="White" Grid.Row="1"   
                                AutoGenerateColumns="False" ItemsSource="{Binding Appointments}" Style="{DynamicResource GrayDataGrid}" 
                                CellStyle="{DynamicResource GrayDataGridCellStyle}" RowStyle="{DynamicResource GrayGridRowStyle}" SelectedValue="{Binding SSelectedUser}" SelectedItem="{Binding SSelectedUser}" RowHeaderStyle="{DynamicResource GrayDataGridRowHeaderStyle}" 

@@ -49,35 +49,35 @@ namespace VrachMedcentr
             ListOfUsers = con.GetUsers();
 
             Users = OneTimeUsers;
-            localBD = con.get3apTime();
-            siteBD = siteDB.get3apTime();
+            //localBD = con.get3apTime();
+            //siteBD = siteDB.get3apTime();
 
-            try
-            {
-                foreach (var a in localBD.Rows)
-                {
-                    foreach (var b in siteBD.Rows)
-                    {
-                        if (!Equals(a, b))
-                        {
-
-
-                            //   azaza.NewRow();
-                           // azaza.Rows.Add((DataRow)a);  не робить
-                        }
-                    }
-                }
-            }
-            catch (Exception e) { MessageBox.Show(e.ToString()); }
+            //try
+            //{
+            //    foreach (var a in localBD.Rows)
+            //    {
+            //        foreach (var b in siteBD.Rows)
+            //        {
+            //            if (!Equals(a, b))
+            //            {
 
 
-            localBD.AcceptChanges();
-            localBD.Merge(siteBD, true);
+            //                //   azaza.NewRow();
+            //               // azaza.Rows.Add((DataRow)a);  не робить
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception e) { MessageBox.Show(e.ToString()); }
 
-            DataTable tempTime = localBD.GetChanges(DataRowState.Unchanged);
 
-            //  resultBD = tempTime;
-            resultBD = azaza;
+            //localBD.AcceptChanges();
+            //localBD.Merge(siteBD, true);
+
+            //DataTable tempTime = localBD.GetChanges(DataRowState.Unchanged);
+
+            ////  resultBD = tempTime;
+            //resultBD = azaza;
 
 
             // MessageBox.Show(con.getHash().ToString());
