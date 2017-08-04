@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -35,7 +36,67 @@ namespace VrachMedcentr
         public ObservableCollection<DateTime> Otemp { get; set; }
         private Users SelectedUser;
         #endregion
+        conBD siteDB = new conBD("shostka.mysql.ukraine.com.ua", "shostka_odc", "shostka_odc", "Cpu1234Pro");
+        #region Constructor
+        //
+        DataTable azaza = new DataTable();
+        public regViewModel()
+        {
+            // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
+            //CheckConnection();
+            DateDoctorAcepting = DateTime.Today;
+            ListOfSpecf = con.getList();
+            ListOfUsers = con.GetUsers();
 
+            Users = OneTimeUsers;
+            localBD = con.get3apTime();
+            siteBD = siteDB.get3apTime();
+
+            try
+            {
+                foreach (var a in localBD.Rows)
+                {
+                    foreach (var b in siteBD.Rows)
+                    {
+                        if (!Equals(a, b))
+                        {
+
+
+                            //   azaza.NewRow();
+                           // azaza.Rows.Add((DataRow)a);  не робить
+                        }
+                    }
+                }
+            }
+            catch (Exception e) { MessageBox.Show(e.ToString()); }
+
+
+            localBD.AcceptChanges();
+            localBD.Merge(siteBD, true);
+
+            DataTable tempTime = localBD.GetChanges(DataRowState.Unchanged);
+
+            //  resultBD = tempTime;
+            resultBD = azaza;
+
+
+            // MessageBox.Show(con.getHash().ToString());
+            foreach (var a in ListOfUsers)
+            {
+                OneTimeUsers.Add(a.userFIO);
+            }
+            DoctorTimes = new ObservableCollection<Times>();
+            try
+            {
+                DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
+                OneTimeDoctorTimes = DoctorTimes;
+            }
+            catch { }
+            //  localDB.save2("473", "SUG+", "AL+", "Inf+");
+
+        }
+
+        #endregion
         #region Public Variables
 
 
@@ -43,6 +104,9 @@ namespace VrachMedcentr
         //   public Times SelectedTime { get; set; }
         public ObservableCollection<Appointments> Appointments { get; set; }
         public List<DoctorsList> ListOfSpecf { get; set; }
+        public DataTable localBD { get; set; }
+        public DataTable siteBD { get; set; }
+        public DataTable resultBD { get; set; }
         public ObservableCollection<DocNames> ListOfDocNames { get; set; }
 
         public ObservableCollection<Times> DoctorTimes { get; set; }
@@ -55,7 +119,9 @@ namespace VrachMedcentr
         ///  в тоже время все команды и функции с вложеных дата контекство вроде как работают проверил на кнопке 
         ///  **Файл CardPages строка: 218
         /// </summary>
-       
+        /// 
+
+
         private Appointments _SSelectedUser;
         public Appointments SSelectedUser
         {
@@ -66,7 +132,7 @@ namespace VrachMedcentr
             set
             {
                 _SSelectedUser = value;
-               
+
                 // MessageBox.Show(_SSelectedUser.IDUser);
                 //CardPages CP = new CardPages();
 
@@ -287,37 +353,7 @@ namespace VrachMedcentr
 
         #endregion
 
-        #region Constructor
 
-        public regViewModel()
-        {
-            // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
-            //CheckConnection();
-             DateDoctorAcepting = DateTime.Today;
-            ListOfSpecf = con.getList();
-            ListOfUsers = con.GetUsers();
-            // DateDoctorAcepting = DateTime.Parse("2017-07-07");
-
-
-            Users = OneTimeUsers;
-
-
-            foreach (var a in ListOfUsers)
-            {
-                OneTimeUsers.Add(a.userFIO);
-            }
-            DoctorTimes = new ObservableCollection<Times>();
-            try
-            {
-                DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
-                OneTimeDoctorTimes = DoctorTimes;
-            }
-            catch { }
-          //  localDB.save2("473", "SUG+", "AL+", "Inf+");
-
-        }
-
-        #endregion
 
         //  public DoctorsList.DocNames sas { get; set; }
         //  WPF_Hospital.MainWindow a = new WPF_Hospital.MainWindow();
@@ -327,7 +363,7 @@ namespace VrachMedcentr
 
 
 
-       
+
 
         /// <summary>
         /// Метод для обновления росписания врача с проверкой на робочи/не робочий день
@@ -507,8 +543,8 @@ namespace VrachMedcentr
                   }));
             }
         }
-        
-       
+
+
         private RelayCommand _EditTimes;
         public RelayCommand EditTimes
         {
@@ -521,7 +557,7 @@ namespace VrachMedcentr
                   }));
             }
         }
-      
+
         string S_LastName { get; set; }
         string S_FirstName { get; set; }
         DateTime S_DateBorn { get; set; }

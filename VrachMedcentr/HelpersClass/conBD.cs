@@ -41,7 +41,7 @@ namespace VrachMedcentr
             IPStatus status = IPStatus.Unknown;
             try
             {
-                status = new Ping().Send("google.ru").Status;
+                status = new Ping().Send("google.com.ua").Status;
             }
             catch { }
 
@@ -87,6 +87,7 @@ namespace VrachMedcentr
             {
                 while (dr.Read())
                 {
+
                     temp.Add(new DoctorsList
                     {
                         specf = dr.GetString("name"),
@@ -101,6 +102,50 @@ namespace VrachMedcentr
             con.Close();
             // GetDoctrosNames(5);
             return temp;
+        }
+
+
+        public DataTable get3apTime()
+        {
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+            //mysqlCSB.ConvertZeroDateTime = true;
+            mysqlCSB.AllowZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+            con.Open();
+            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop";
+            cmd.Connection = con;
+            cmd.ExecuteNonQuery();
+
+            int a = 0;
+            DataTable dt = new DataTable();
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dt.Load(reader);
+
+
+
+
+            //using (MySqlDataReader dr = cmd.ExecuteReader())
+            //{
+            //    while (dr.Read())
+            //    {
+            //        a = dr.GetInt32("Checksum");
+
+            //    }
+            //}
+            con.Close();
+            return dt;
+            // GetDoctrosNames(5);
+            //   return temp;
         }
 
         /// <summary>
