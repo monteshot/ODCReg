@@ -666,10 +666,12 @@ namespace VrachMedcentr
                       WebAppoinments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
                       LocalAppoinments = conLocal.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
 
-                      var result = WebAppoinments.Where(p => !LocalAppoinments.Any(l => p.IDUser == l.IDUser));
+                      var result = WebAppoinments.Where(p => LocalAppoinments.Any(l => l.IDUser != p.IDUser && l.Pacient != p.Pacient));
 
-                      Appointments = (ObservableCollection<Appointments>)result;
+                      List<Appointments> temp = result.ToList<Appointments>();
 
+                      //Appointments = (ObservableCollection<Appointments>)temp;
+                      
                       int a = 0;
                   }));
             }
