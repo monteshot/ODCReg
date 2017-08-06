@@ -115,6 +115,48 @@ namespace VrachMedcentr
             // GetDoctrosNames(5);
             return temp;
         }
+        public DataTable get3apTime()
+        {
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+           // mysqlCSB.ConvertZeroDateTime = true;
+            mysqlCSB.AllowZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+            con.Open();
+            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop";
+            cmd.Connection = con;
+            cmd.ExecuteNonQuery();
+
+            int a = 0;
+            DataTable dt = new DataTable();
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dt.Load(reader);
+
+
+
+
+            //using (MySqlDataReader dr = cmd.ExecuteReader())
+            //{
+            //    while (dr.Read())
+            //    {
+            //        a = dr.GetInt32("Checksum");
+
+            //    }
+            //}
+            con.Close();
+            return dt;
+            // GetDoctrosNames(5);
+            //   return temp;
+        }
 
         /// <summary>
         ///  Find DocNames For each specialization
@@ -242,7 +284,7 @@ namespace VrachMedcentr
         #endregion
 
         #region GET DOCTORS TIMES
-        public ObservableCollection<Times> getDocTimes(string docId, string docTimeId, DateTime date)
+        public List<Times> getDocTimes(string docId, string docTimeId, DateTime date)
         {
 
             MySqlConnectionStringBuilder mysqlCSB;
@@ -259,7 +301,7 @@ namespace VrachMedcentr
             con.ConnectionString = mysqlCSB.ConnectionString;
             MySqlCommand cmd = new MySqlCommand();
 
-            ObservableCollection<Times> temp = new ObservableCollection<Times>();
+            List<Times> temp = new List<Times>();
 
 
             con.Open();
@@ -303,6 +345,8 @@ namespace VrachMedcentr
 
             updateCurrList = getDocPubTime;
             DocID = docId;
+           
+           temp = temp.OrderBy(p => p.Time).ToList();
             return temp;
         }
         /// <summary>

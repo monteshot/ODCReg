@@ -14,7 +14,7 @@ namespace VrachMedcentr
     {
         #region Public variables
 
-        public ObservableCollection<Times> docTimes { get; set; }
+        public List<Times> docTimes { get; set; }
         public ObservableCollection<DocNames> docBool { get; set; }
         public DocNames docSelected { get; set; }
         public Times SelectedTime { get; set; }

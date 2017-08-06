@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MySql.Data.Types;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -30,7 +32,7 @@ namespace VrachMedcentr
         private bool timehour;
         private DateTime dateDoctorAcepting;
         private ObservableCollection<string> OneTimeUsers = new ObservableCollection<string>();// переменная для представления ФИО юзверей в комбобоксе  
-        private ObservableCollection<Times> OneTimeDoctorTimes = new ObservableCollection<Times>();
+        private List<Times> OneTimeDoctorTimes = new List<Times>();
         private ObservableCollection<Users> ListOfUsers;//переменная для считыванья списка юзверей единожди при запуске програмы
         public ObservableCollection<DateTime> Otemp { get; set; }
         private Users SelectedUser;
@@ -47,7 +49,7 @@ namespace VrachMedcentr
         public List<DoctorsList> ListOfSpecf { get; set; }
         public ObservableCollection<DocNames> ListOfDocNames { get; set; }
 
-        public ObservableCollection<Times> DoctorTimes { get; set; }
+        public List<Times> DoctorTimes { get; set; }
         // public ObservableCollection<Times> DoctorTimes { get; set; }
         public ObservableCollection<string> Users { get; set; }
         public ObservableCollection<DateTime> WorkingDays { get; set; }
@@ -222,6 +224,7 @@ namespace VrachMedcentr
                     int i = 0;
                     RefreshDocTimes();
                     Appointments = con.GetAppointments(SelectedDocNames.docID, value);
+                    
 
                 }
                 catch { }
@@ -314,7 +317,7 @@ namespace VrachMedcentr
             {
                 OneTimeUsers.Add(a.userFIO);
             }
-            DoctorTimes = new ObservableCollection<Times>();
+            DoctorTimes = new List<Times>();
             try
             {
                 DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
@@ -354,7 +357,7 @@ namespace VrachMedcentr
 
                         if (WorkingDays.Contains(DateDoctorAcepting) == true)
                         {
-                            ObservableCollection<Times> temp = new ObservableCollection<Times>();
+                            List<Times> temp = new List<Times>();
                             DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
                             foreach (var a in DoctorTimes)
                             {
@@ -365,7 +368,7 @@ namespace VrachMedcentr
                         }
                         else
                         {
-                            DoctorTimes = new ObservableCollection<Times>();
+                            DoctorTimes = new List<Times>();
                             DoctorTimes.Add(new Times { Time = "Не робочій день", Status = "Red" });
                         }
                     }
@@ -383,7 +386,7 @@ namespace VrachMedcentr
                     }
                     else
                     {
-                        DoctorTimes = new ObservableCollection<Times>();
+                        DoctorTimes = new List<Times>();
                         DoctorTimes.Add(new Times { Time = "Не робочій день", Status = "Red" });
                     }
 
@@ -445,7 +448,7 @@ namespace VrachMedcentr
                     if (SelectedDocNames.docTimeId == "0" || WorkingDays.Contains(DateDoctorAcepting) == false)
                     {
 
-                        DoctorTimes = new ObservableCollection<Times>();
+                        DoctorTimes = new List<Times>();
                         DoctorTimes.Add(new Times { Time = "Не робочий день", Status = "Red" });
                     }
                     else
@@ -661,18 +664,35 @@ namespace VrachMedcentr
                 return _test ??
                   (_test = new RelayCommand(obj =>
                   {
-                      ObservableCollection<Appointments> LocalAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
-                      ObservableCollection<Appointments> WebAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
-                      WebAppoinments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
-                      LocalAppoinments = conLocal.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+                      //МЕТОД РАЗ(полностью оттестил логика понятна но медленно так как листы)
 
-                      var result = WebAppoinments.Where(p => LocalAppoinments.Any(l => l.IDUser != p.IDUser && l.Pacient != p.Pacient));
+                      //ObservableCollection<Appointments> LocalAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
+                      //ObservableCollection<Appointments> WebAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
+                      //WebAppoinments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+                      //LocalAppoinments = conLocal.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
 
-                      List<Appointments> temp = result.ToList<Appointments>();
+                      //var result = WebAppoinments.Where(p => LocalAppoinments.Any(l => l.IDUser != p.IDUser && l.Pacient != p.Pacient));
 
-                      //Appointments = (ObservableCollection<Appointments>)temp;
+                      //List<Appointments> temp = result.ToList<Appointments>();
+
+                      //МЕТОД ДВА(поидее самый быстры но нада оттестить логику)
+
+                      DataTable Web = new DataTable();
+                      DataTable Local = new DataTable();
                       
-                      int a = 0;
+                      Web = con.get3apTime();
+                      Local = conLocal.get3apTime();
+                      
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                      Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
+                      
+                      List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
+                     
+                      foreach(var a in t)
+                      {
+                          DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
+                      }
+                      int i = 0;
                   }));
             }
         }
