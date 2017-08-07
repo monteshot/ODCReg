@@ -677,21 +677,26 @@ namespace VrachMedcentr
 
                       //МЕТОД ДВА(поидее самый быстры но нада оттестить логику)
 
-                      DataTable Web = new DataTable();
-                      DataTable Local = new DataTable();
-                      
-                      Web = con.get3apTime();
-                      Local = conLocal.get3apTime();
-                      
-                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                      Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
-                      
-                      List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
-                     
-                      foreach(var a in t)
-                      {
-                          DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
-                      }
+                      //DataTable Web = new DataTable();
+                      //DataTable Local = new DataTable();
+
+                      //Web = con.get3apTime();
+                      //Local = conLocal.get3apTime();
+
+                      //  Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                      //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
+
+                      //List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
+
+                      //foreach(var a in t)
+                      //{
+                      //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
+                      //}
+
+                      SynhronyzeClass test = new SynhronyzeClass();
+                      test.SynhronyzeTable("gsdgs");
+
+
                       int i = 0;
                   }));
             }

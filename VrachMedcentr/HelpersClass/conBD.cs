@@ -15,10 +15,10 @@ namespace VrachMedcentr
 {
     class conBD
     {
-        string server;
-        string database;
-        string UserID;
-        string Password;
+        public string server;
+        public string database;
+        public string UserID;
+        public string Password;
         private string stat;
 
         #region Constructors
@@ -42,6 +42,7 @@ namespace VrachMedcentr
             UserID = _UserID;
             Password = _Password;
         }
+
 
         #endregion
 
@@ -67,6 +68,8 @@ namespace VrachMedcentr
                 MessageBox.Show("Сервер временно недоступен!");
             }
         }
+
+
         #endregion
 
         #region Get doctors Specialization and Names fow TreeView
@@ -124,7 +127,7 @@ namespace VrachMedcentr
             mysqlCSB.Database = database;
             mysqlCSB.UserID = UserID;
             mysqlCSB.Password = Password;
-           // mysqlCSB.ConvertZeroDateTime = true;
+            // mysqlCSB.ConvertZeroDateTime = true;
             mysqlCSB.AllowZeroDateTime = true;
 
             MySqlConnection con = new MySqlConnection();
@@ -135,27 +138,13 @@ namespace VrachMedcentr
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
 
-            int a = 0;
             DataTable dt = new DataTable();
 
             MySqlDataReader reader = cmd.ExecuteReader();
             dt.Load(reader);
-
-
-
-
-            //using (MySqlDataReader dr = cmd.ExecuteReader())
-            //{
-            //    while (dr.Read())
-            //    {
-            //        a = dr.GetInt32("Checksum");
-
-            //    }
-            //}
             con.Close();
             return dt;
-            // GetDoctrosNames(5);
-            //   return temp;
+
         }
 
         /// <summary>
@@ -345,8 +334,8 @@ namespace VrachMedcentr
 
             updateCurrList = getDocPubTime;
             DocID = docId;
-           
-           temp = temp.OrderBy(p => p.Time).ToList();
+
+            temp = temp.OrderBy(p => p.Time).ToList();
             return temp;
         }
         /// <summary>
