@@ -135,6 +135,7 @@
     </ApplicationDefinition>
     <Compile Include="Data\TablesData\OblickTable.cs" />
     <Compile Include="Data\TablesData\TextInputToVisibilityConverter.cs" />
+    <Compile Include="HelpersClass\SynhronyzeClass.cs" />
     <Compile Include="View\confirmation.xaml.cs">
       <DependentUpon>confirmation.xaml</DependentUpon>
     </Compile>

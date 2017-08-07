@@ -15,23 +15,37 @@ namespace VrachMedcentr
 {
     class conBD
     {
-        string server;
-        string database;
-        string UserID;
-        string Password;
+        public string server;
+        public string database;
+        public string UserID;
+        public string Password;
         private string stat;
+
+        #region Constructors
 
         public conBD()
         {
-            //server = "shostka.mysql.ukraine.com.ua";
-            //database = "shostka_odc";
-            //UserID = "shostka_odc";
-            //Password = "Cpu1234Pro";
             server = "shostka.mysql.ukraine.com.ua";
-            database = "shostka_medcen";
-            UserID = "shostka_medcen";
-            Password = "n5t7jzqv";
+            database = "shostka_odc";
+            UserID = "shostka_odc";
+            Password = "Cpu1234Pro";
+            //server = "shostka.mysql.ukraine.com.ua";
+            //database = "shostka_medcen";
+            //UserID = "shostka_medcen";
+            //Password = "n5t7jzqv";
         }
+
+        public conBD(string _server, string _database, string _UserID, string _Password)
+        {
+            server = _server;
+            database = _database;
+            UserID = _UserID;
+            Password = _Password;
+        }
+
+
+        #endregion
+
         #region Helpers Methods
         /// <summary>
         /// функция проверки наличия интернет соединения
@@ -54,6 +68,8 @@ namespace VrachMedcentr
                 MessageBox.Show("Сервер временно недоступен!");
             }
         }
+
+
         #endregion
 
         #region Get doctors Specialization and Names fow TreeView
@@ -102,6 +118,34 @@ namespace VrachMedcentr
             con.Close();
             // GetDoctrosNames(5);
             return temp;
+        }
+        public DataTable get3apTime()
+        {
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+            // mysqlCSB.ConvertZeroDateTime = true;
+            mysqlCSB.AllowZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+            con.Open();
+            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop";
+            cmd.Connection = con;
+            cmd.ExecuteNonQuery();
+
+            DataTable dt = new DataTable();
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dt.Load(reader);
+            con.Close();
+            return dt;
+
         }
 
 
@@ -274,7 +318,7 @@ namespace VrachMedcentr
         #endregion
 
         #region GET DOCTORS TIMES
-        public ObservableCollection<Times> getDocTimes(string docId, string docTimeId, DateTime date)
+        public List<Times> getDocTimes(string docId, string docTimeId, DateTime date)
         {
 
             MySqlConnectionStringBuilder mysqlCSB;
@@ -291,7 +335,7 @@ namespace VrachMedcentr
             con.ConnectionString = mysqlCSB.ConnectionString;
             MySqlCommand cmd = new MySqlCommand();
 
-            ObservableCollection<Times> temp = new ObservableCollection<Times>();
+            List<Times> temp = new List<Times>();
 
 
             con.Open();
@@ -335,6 +379,8 @@ namespace VrachMedcentr
 
             updateCurrList = getDocPubTime;
             DocID = docId;
+
+            temp = temp.OrderBy(p => p.Time).ToList();
             return temp;
         }
         /// <summary>
@@ -949,13 +995,8 @@ namespace VrachMedcentr
         #endregion
 
 
-        public conBD(string Server, string Database, string userid, string pass)
-        {
-            server = Server;
-            database = Database;
-            UserID = userid;
-            Password = pass;
-        }
+
+
 
 
     }

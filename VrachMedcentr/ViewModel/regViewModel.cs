@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.Types;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -31,10 +32,12 @@ namespace VrachMedcentr
         private bool timehour;
         private DateTime dateDoctorAcepting;
         private ObservableCollection<string> OneTimeUsers = new ObservableCollection<string>();// переменная для представления ФИО юзверей в комбобоксе  
-        private ObservableCollection<Times> OneTimeDoctorTimes = new ObservableCollection<Times>();
+        private List<Times> OneTimeDoctorTimes = new List<Times>();
         private ObservableCollection<Users> ListOfUsers;//переменная для считыванья списка юзверей единожди при запуске програмы
         public ObservableCollection<DateTime> Otemp { get; set; }
         private Users SelectedUser;
+
+   
         #endregion
         conBD siteDB = new conBD("shostka.mysql.ukraine.com.ua", "shostka_odc", "shostka_odc", "Cpu1234Pro");
         #region Constructor
@@ -109,7 +112,7 @@ namespace VrachMedcentr
         public DataTable resultBD { get; set; }
         public ObservableCollection<DocNames> ListOfDocNames { get; set; }
 
-        public ObservableCollection<Times> DoctorTimes { get; set; }
+        public List<Times> DoctorTimes { get; set; }
         // public ObservableCollection<Times> DoctorTimes { get; set; }
         public ObservableCollection<string> Users { get; set; }
         public ObservableCollection<DateTime> WorkingDays { get; set; }
@@ -286,6 +289,7 @@ namespace VrachMedcentr
                     int i = 0;
                     RefreshDocTimes();
                     Appointments = con.GetAppointments(SelectedDocNames.docID, value);
+                    
 
                 }
                 catch { }
@@ -335,13 +339,17 @@ namespace VrachMedcentr
                         }
                     }
                     //if (SelectedDocNames.docTimeId == "0" && SelectedDocNames.docTimeId == null || WorkingDays.Contains(DateDoctorAcepting)==false)
-
                     Appointments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+
                     //TimeHour = value.docBool; // присваивать значение с статуса врача
                     // КОСТІЛЬ ПЕРЕДЕЛАТЬ ИЗМЕНИТЬ СЧИТІВАНЬЕ ЛИСТА С СПЕЦИФИКАЦИЯМИ И ВРАЧАМИ (Спросить у ИЛЬИ)
 
                 }
-                catch { }
+                catch (Exception e)
+
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
         }
 
@@ -350,9 +358,40 @@ namespace VrachMedcentr
 
         #region Helpers object
         conBD con = new conBD();
-
+        conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
         #endregion
 
+        #region Constructor
+
+        public regViewModel()
+        {
+            // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
+            //CheckConnection();
+             DateDoctorAcepting = DateTime.Today;
+            ListOfSpecf = con.getList();
+            ListOfUsers = con.GetUsers();
+           
+
+            // DateDoctorAcepting = DateTime.Parse("2017-07-07");
+
+
+            Users = OneTimeUsers;
+
+
+            foreach (var a in ListOfUsers)
+            {
+                OneTimeUsers.Add(a.userFIO);
+            }
+            DoctorTimes = new List<Times>();
+            try
+            {
+                DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
+                OneTimeDoctorTimes = DoctorTimes;
+            }
+            catch { }
+          //  localDB.save2("473", "SUG+", "AL+", "Inf+");
+
+        }
 
 
         //  public DoctorsList.DocNames sas { get; set; }
@@ -382,7 +421,7 @@ namespace VrachMedcentr
 
                         if (WorkingDays.Contains(DateDoctorAcepting) == true)
                         {
-                            ObservableCollection<Times> temp = new ObservableCollection<Times>();
+                            List<Times> temp = new List<Times>();
                             DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
                             foreach (var a in DoctorTimes)
                             {
@@ -393,7 +432,7 @@ namespace VrachMedcentr
                         }
                         else
                         {
-                            DoctorTimes = new ObservableCollection<Times>();
+                            DoctorTimes = new List<Times>();
                             DoctorTimes.Add(new Times { Time = "Не робочій день", Status = "Red" });
                         }
                     }
@@ -411,7 +450,7 @@ namespace VrachMedcentr
                     }
                     else
                     {
-                        DoctorTimes = new ObservableCollection<Times>();
+                        DoctorTimes = new List<Times>();
                         DoctorTimes.Add(new Times { Time = "Не робочій день", Status = "Red" });
                     }
 
@@ -473,7 +512,7 @@ namespace VrachMedcentr
                     if (SelectedDocNames.docTimeId == "0" || WorkingDays.Contains(DateDoctorAcepting) == false)
                     {
 
-                        DoctorTimes = new ObservableCollection<Times>();
+                        DoctorTimes = new List<Times>();
                         DoctorTimes.Add(new Times { Time = "Не робочий день", Status = "Red" });
                     }
                     else
@@ -649,6 +688,8 @@ namespace VrachMedcentr
         }
 
 
+
+
         /// <summary>
         /// команда на биндинг события для изменения сосотояния чекбокса с ЗАНЕСЕНИЕМ ИЗМЕЕНИЙ В БАЗУ
         /// </summary>
@@ -687,9 +728,40 @@ namespace VrachMedcentr
                 return _test ??
                   (_test = new RelayCommand(obj =>
                   {
-                      //CheckBoxChanged();
-                      MessageBox.Show("sasdasdasd");
-                      string fasfgafs = "fasgfa";
+                      //МЕТОД РАЗ(полностью оттестил логика понятна но медленно так как листы)
+
+                      //ObservableCollection<Appointments> LocalAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
+                      //ObservableCollection<Appointments> WebAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
+                      //WebAppoinments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+                      //LocalAppoinments = conLocal.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
+
+                      //var result = WebAppoinments.Where(p => LocalAppoinments.Any(l => l.IDUser != p.IDUser && l.Pacient != p.Pacient));
+
+                      //List<Appointments> temp = result.ToList<Appointments>();
+
+                      //МЕТОД ДВА(поидее самый быстры но нада оттестить логику)
+
+                      //DataTable Web = new DataTable();
+                      //DataTable Local = new DataTable();
+
+                      //Web = con.get3apTime();
+                      //Local = conLocal.get3apTime();
+
+                      //  Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                      //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
+
+                      //List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
+
+                      //foreach(var a in t)
+                      //{
+                      //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
+                      //}
+
+                      SynhronyzeClass test = new SynhronyzeClass();
+                      test.SynhronyzeTable("gsdgs");
+
+
+                      int i = 0;
                   }));
             }
         }
