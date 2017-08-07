@@ -119,34 +119,34 @@ namespace VrachMedcentr
             // GetDoctrosNames(5);
             return temp;
         }
-        public DataTable get3apTime()
-        {
+        //public DataTable get3apTime()
+        //{
 
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-            // mysqlCSB.ConvertZeroDateTime = true;
-            mysqlCSB.AllowZeroDateTime = true;
+        //    MySqlConnectionStringBuilder mysqlCSB;
+        //    mysqlCSB = new MySqlConnectionStringBuilder();
+        //    mysqlCSB.Server = server;
+        //    mysqlCSB.Database = database;
+        //    mysqlCSB.UserID = UserID;
+        //    mysqlCSB.Password = Password;
+        //    // mysqlCSB.ConvertZeroDateTime = true;
+        //    mysqlCSB.AllowZeroDateTime = true;
 
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-            con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop";
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
+        //    MySqlConnection con = new MySqlConnection();
+        //    con.ConnectionString = mysqlCSB.ConnectionString;
+        //    MySqlCommand cmd = new MySqlCommand();
+        //    con.Open();
+        //    cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop";
+        //    cmd.Connection = con;
+        //    cmd.ExecuteNonQuery();
 
-            DataTable dt = new DataTable();
+        //    DataTable dt = new DataTable();
 
-            MySqlDataReader reader = cmd.ExecuteReader();
-            dt.Load(reader);
-            con.Close();
-            return dt;
+        //    MySqlDataReader reader = cmd.ExecuteReader();
+        //    dt.Load(reader);
+        //    con.Close();
+        //    return dt;
 
-        }
+        //}
 
 
         public DataTable get3apTime()
