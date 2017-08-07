@@ -25,7 +25,7 @@ namespace VrachMedcentr
             //Local = conLocal.get3apTime();
 
             Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-          Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
+            Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
 
             List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
 
