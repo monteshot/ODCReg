@@ -59,13 +59,13 @@ namespace VrachMedcentr
                               //    permitToBase = false;
                               //    break;
                               //}
-                              if (a.Time == "") { continue; }
+                              if (a.Label == "") { continue; }
                               if (a.PublickPrivate == true)
                               {
 
-                                  z += a.Time + "\r";
+                                  z += a.Label + "\r";
 
-                                  if (a.Time == null || a.Time == "")
+                                  if (a.Label == null || a.Label == "")
                                   {
                                       z = z.Substring(0, z.Length - 1);
                                   }
@@ -73,9 +73,9 @@ namespace VrachMedcentr
                               else
                               {
 
-                                  prive += a.Time + "\r";
+                                  prive += a.Label + "\r";
 
-                                  if (a.Time == null || a.Time == "")
+                                  if (a.Label == null || a.Label == "")
                                   {
                                       prive = prive.Substring(0, z.Length - 1);
                                   }
@@ -128,7 +128,7 @@ namespace VrachMedcentr
                   (_addTimes = new RelayCommand(obj =>
                   {
 
-                      docTimes.Add(new Times { Time = "" });
+                      docTimes.Add(new Times { Label = "" });
                       NotifyPropertyChanged();
 
 

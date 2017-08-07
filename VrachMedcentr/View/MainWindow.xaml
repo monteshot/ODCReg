@@ -275,7 +275,7 @@
                                                 <ColumnDefinition></ColumnDefinition>
                                                 <ColumnDefinition></ColumnDefinition>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Foreground="{Binding Status}"  FontSize="18" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="0" Foreground="{Binding Status}"  FontSize="18" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
                                             <TextBlock Grid.Column="1" FontSize="18" Text="{Binding TimeProperties, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
 
                                         </Grid>

@@ -11,8 +11,8 @@ namespace VrachMedcentr
     class Times
     {
         private bool _PublickPrivate;
-
         public string Time { get; set; }
+        public string Label { get; set; }
         public string Status { get; set; }// Отображает занято время или нет с помощью цвета задаваемого стрингом
 
         //public bool PublickPrivate { get; set; }

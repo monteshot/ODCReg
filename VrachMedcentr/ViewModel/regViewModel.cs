@@ -362,14 +362,14 @@ namespace VrachMedcentr
                             foreach (var a in DoctorTimes)
                             {
                                 i++;
-                                temp.Add(new Times { Status = a.Status, Time = "Talon №" + i.ToString(), TimeProperties = a.TimeProperties });
+                                temp.Add(new Times {Time=a.Time, Status = a.Status, Label = "Talon №" + i.ToString(), TimeProperties = a.TimeProperties });
                             }
                             DoctorTimes = temp;
                         }
                         else
                         {
                             DoctorTimes = new List<Times>();
-                            DoctorTimes.Add(new Times { Time = "Не робочій день", Status = "Red" });
+                            DoctorTimes.Add(new Times { Label = "Не робочій день", Status = "Red" });
                         }
                     }
 
@@ -387,7 +387,7 @@ namespace VrachMedcentr
                     else
                     {
                         DoctorTimes = new List<Times>();
-                        DoctorTimes.Add(new Times { Time = "Не робочій день", Status = "Red" });
+                        DoctorTimes.Add(new Times { Label = "Не робочій день", Status = "Red" });
                     }
 
                 }
@@ -425,7 +425,7 @@ namespace VrachMedcentr
                 DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
                 foreach (var a in DoctorTimes)
                 {
-                    BackUPdocTimes.Add(new Times { Time = a.Time, Status = a.Status });
+                    BackUPdocTimes.Add(new Times { Label = a.Label, Status = a.Status });
                 }
 
                 VMEditTime.docTimes = DoctorTimes;
@@ -449,7 +449,7 @@ namespace VrachMedcentr
                     {
 
                         DoctorTimes = new List<Times>();
-                        DoctorTimes.Add(new Times { Time = "Не робочий день", Status = "Red" });
+                        DoctorTimes.Add(new Times { Label = "Не робочий день", Status = "Red" });
                     }
                     else
                     {
@@ -493,6 +493,7 @@ namespace VrachMedcentr
 
                                   string temp1 = ComboboxText;
                                   string[] temp = SelectedTime.Time.Split(new char[] { ':' });
+                                  
                                   con.INsertTheApointment(SelectedUser.userId, Convert.ToInt32(SelectedDocNames.docID), SelectedUser.userFIO, SelectedUser.userPhone, SelectedUser.userMail,
                                       SelectedSpecf.specf, SelectedDocNames.docName, SelectedDocNames.docEmail, DateDoctorAcepting, temp[0], temp[1], SelectedDocNames.docCab);
                                   Appointments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
@@ -581,7 +582,7 @@ namespace VrachMedcentr
             {
                 foreach (var a in DoctorTimes)
                 {
-                    BackUPdocTimes.Add(new Times { Time = a.Time, Status = a.Status });
+                    BackUPdocTimes.Add(new Times { Label = a.Label, Status = a.Status });
                 }
 
                 VMEditDays.docTimes = BackUPdocTimes;
@@ -694,7 +695,7 @@ namespace VrachMedcentr
                       //}
 
                       SynhronyzeClass test = new SynhronyzeClass();
-                      test.SynhronyzeTable("gsdgs");
+                      test.SynhronyzeTable("ekfgq_ttfsp_dop");
 
 
                       int i = 0;

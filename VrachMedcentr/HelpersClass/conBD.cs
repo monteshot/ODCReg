@@ -154,6 +154,7 @@ namespace VrachMedcentr
         /// <returns></returns>
         public ObservableCollection<DocNames> GetDoctrosNames(string specialization)
         {
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -319,7 +320,7 @@ namespace VrachMedcentr
             {
                 if (a != "" && a != null)
                 {
-                    temp.Add(new Times { Time = a, Status = GetStat(a, date, docId), PublickPrivate = true });
+                    temp.Add(new Times {Time =a, Label = a, Status = GetStat(a, date, docId), PublickPrivate = true });
                 }
             }
 
@@ -327,7 +328,7 @@ namespace VrachMedcentr
             {
                 if (a != "" && a != null)
                 {
-                    temp.Add(new Times { Time = a, Status = GetStat(a, date, docId), PublickPrivate = false });
+                    temp.Add(new Times {Time=a, Label = a, Status = GetStat(a, date, docId), PublickPrivate = false });
                 }
             }
 
@@ -335,7 +336,7 @@ namespace VrachMedcentr
             updateCurrList = getDocPubTime;
             DocID = docId;
 
-            temp = temp.OrderBy(p => p.Time).ToList();
+            temp = temp.OrderBy(p => p.Label).ToList();
             return temp;
         }
         /// <summary>
