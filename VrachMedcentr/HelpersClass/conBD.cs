@@ -105,7 +105,7 @@ namespace VrachMedcentr
         }
 
 
-        public DataTable get3apTime()
+        public DataTable get_ekfgq_ttfsp_dop()
         {
 
             MySqlConnectionStringBuilder mysqlCSB;
@@ -153,7 +153,7 @@ namespace VrachMedcentr
             //   return temp;
         }
 
-        public void insert3apTime(DataTable DT)
+        public void insert_ekfgq_ttfsp_dop(DataTable DT)
         {
 
             MySqlConnectionStringBuilder mysqlCSB;
@@ -182,8 +182,7 @@ namespace VrachMedcentr
 
             foreach (DataRowCollection z in DT.Rows)
             {
-                Rw.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','{27}','{28}'," +
-                                     "'{29}')", z[0].ToString(), z[1].ToString(), z[2].ToString(), z[3].ToString(), z[4].ToString(), z[5].ToString(), z[6].ToString(), z[7].ToString(), z[8].ToString(), z[9].ToString(), z[10].ToString(), z[11].ToString(), z[11].ToString(), z[12].ToString(), z[13].ToString(), z[14].ToString(), z[15].ToString(), z[16].ToString(), z[17].ToString(), z[18].ToString(), z[19].ToString(), z[20].ToString(), z[21].ToString(), z[22].ToString(), z[23].ToString(), z[24].ToString(), z[25].ToString(), z[26].ToString(), z[27].ToString(), z[28].ToString(), z[29].ToString()));
+                Rw.Add($"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}','{z[9].ToString()}','{z[10].ToString()}','{z[11].ToString()}','{z[12].ToString()}','{z[13].ToString()}','{z[14].ToString()}','{z[15].ToString()}','{z[16].ToString()}','{z[17].ToString()}','{z[18].ToString()}','{z[19].ToString()}','{z[20].ToString()}','{z[21].ToString()}','{z[22].ToString()}','{z[23].ToString()}','{z[24].ToString()}','{z[25].ToString()}','{z[26].ToString()}','{z[27].ToString()}','{z[28].ToString()}','{z[29].ToString()}')");
             }
 
             MegaCom.Append(string.Join(",", Rw));
@@ -255,17 +254,7 @@ namespace VrachMedcentr
             //cmd.Parameters.AddWithValue("@number_cabinet", _number_cabinet);
 
             //#endregion
-
-
-
-
-
-
-
-
-
-
-
+            
             //int a = 0;
             //DataTable dt = new DataTable();
 
@@ -288,6 +277,87 @@ namespace VrachMedcentr
             // GetDoctrosNames(5);
             //   return temp;
         }
+
+
+        public void insert_ekfgq_ttfsp(DataTable DT)
+        {
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+
+            mysqlCSB.AllowZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+
+           
+
+            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp(id,idspec, iduser, reception, published, dttime ,hrtime,mntime,ordering ,checked_out, checked_out_time, rfio, rphone, info, ipuser, ttime, plimit,pricezap ,rmail,sms) VALUES ");
+            List<string> Rw = new List<string>();
+
+            foreach (DataRowCollection z in DT.Rows)
+            {
+                Rw.Add(
+                    $"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}','{z[9].ToString()}','{z[10].ToString()}','{z[11].ToString()}','{z[12].ToString()}','{z[13].ToString()}','{z[14].ToString()}','{z[15].ToString()}','{z[16].ToString()}','{z[17].ToString()}','{z[18].ToString()}','{z[19].ToString()}')");
+            }
+
+            MegaCom.Append(string.Join(",", Rw));
+            MegaCom.Append(";");
+
+            con.Open();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = MegaCom.ToString();
+            cmd.ExecuteNonQuery();
+            cmd.Parameters.Clear();
+            con.Close();
+
+           
+        }
+        public void insert_ekfgq_users(DataTable DT)
+        {
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+
+            mysqlCSB.AllowZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+
+
+
+            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_users(id,name, username, email, password, block ,sendEmail,registerDate,lastvisitDate,activation, params, lastResetTime, resetCount,otpKey,otep,requireReset,fio,sms) VALUES ");
+            List<string> Rw = new List<string>();
+
+            foreach (DataRowCollection z in DT.Rows)
+            {
+                Rw.Add(
+                    $"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}','{z[9].ToString()}','{z[10].ToString()}','{z[11].ToString()}','{z[12].ToString()}','{z[13].ToString()}','{z[14].ToString()}','{z[15].ToString()}','{z[16].ToString()}','{z[17].ToString()}')");
+            }
+
+            MegaCom.Append(string.Join(",", Rw));
+            MegaCom.Append(";");
+
+            con.Open();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = MegaCom.ToString();
+            cmd.ExecuteNonQuery();
+            cmd.Parameters.Clear();
+            con.Close();
+
+
+        }
+
 
         /// <summary>
         ///  Find DocNames For each specialization

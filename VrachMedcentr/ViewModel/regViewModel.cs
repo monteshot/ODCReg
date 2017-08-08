@@ -49,8 +49,8 @@ namespace VrachMedcentr
             ListOfUsers = con.GetUsers();
 
             Users = OneTimeUsers;
-            localBD = con.get3apTime();
-            siteBD = siteDB.get3apTime();
+            localBD = con.get_ekfgq_ttfsp_dop();
+            siteBD = siteDB.get_ekfgq_ttfsp_dop();
 
             try
             {
