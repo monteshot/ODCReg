@@ -125,6 +125,11 @@ namespace VrachMedcentr
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
 
+
+
+
+
+
             int a = 0;
             DataTable dt = new DataTable();
 
@@ -144,6 +149,142 @@ namespace VrachMedcentr
             //}
             con.Close();
             return dt;
+            // GetDoctrosNames(5);
+            //   return temp;
+        }
+
+        public void insert3apTime(DataTable DT)
+        {
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+
+            mysqlCSB.AllowZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+
+            // cmd.Parameters.Add("", MySqlDbType.VarChar);
+            //cmd.CommandText = "INSERT INTO ekfgq_ttfsp_dop(id,idrec,iduser,id_specialist,publshed,ordering,checked_out,checked_out_time,rfio,rphone,info,ipuser,rmail,summa,payment_status,number_order,cdate,date,hours,minutes,office_name,specializations_name) VALUES()";
+
+
+            //   string tempOrder = GetNumberOrder();
+            //string[] tempArray = tempOrder.Split(new char[] { '-' });
+            //tempOrder = tempArray[0];
+
+            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_dop(id,idrec, iduser, id_specialist, published, ordering,checked_out, checked_out_time, rfio, rphone, info, ipuser, rmail, summa,payment_status, number_order, cdate, date, hours, minutes, office_name, specializations_name, specialist_name, specialist_email,specialist_phone, order_password,office_desc, office_address, number_cabinet) VALUES ");
+            List<string> Rw = new List<string>();
+
+            foreach (DataRowCollection z in DT.Rows)
+            {
+                Rw.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','{27}','{28}'," +
+                                     "'{29}')", z[0].ToString(), z[1].ToString(), z[2].ToString(), z[3].ToString(), z[4].ToString(), z[5].ToString(), z[6].ToString(), z[7].ToString(), z[8].ToString(), z[9].ToString(), z[10].ToString(), z[11].ToString(), z[11].ToString(), z[12].ToString(), z[13].ToString(), z[14].ToString(), z[15].ToString(), z[16].ToString(), z[17].ToString(), z[18].ToString(), z[19].ToString(), z[20].ToString(), z[21].ToString(), z[22].ToString(), z[23].ToString(), z[24].ToString(), z[25].ToString(), z[26].ToString(), z[27].ToString(), z[28].ToString(), z[29].ToString()));
+            }
+
+            MegaCom.Append(string.Join(",", Rw));
+            MegaCom.Append(";");
+
+            con.Open();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = MegaCom.ToString();
+            cmd.ExecuteNonQuery();
+            cmd.Parameters.Clear();
+            con.Close();
+
+            //string _iduser = DT.Columns["iduser"].ToString();
+            //string _idrec = DT.Columns["idrec"].ToString();
+            //string _id_specialist = DT.Columns["id_specialist"].ToString();
+            //string _published = DT.Columns["published"].ToString();
+            //string _ordering = DT.Columns["ordering"].ToString();
+            //string _checked_out = DT.Columns["checked_out"].ToString();
+            //string _checked_out_time = DT.Columns["checked_out_time"].ToString();
+            //string _rfio = DT.Columns["rfio"].ToString();
+            //string _rphone = DT.Columns["rfio"].ToString();
+            //string _info = DT.Columns["info"].ToString();
+            //string _ipuser = DT.Columns["ipuser"].ToString();
+            //string _rmail = DT.Columns["rmail"].ToString();
+            //string _summa = DT.Columns["summa"].ToString();
+            //string _payment_status = DT.Columns["payment_status"].ToString();
+            //string _number_order = DT.Columns["number_order"].ToString();
+            //string _cdate = DT.Columns["cdate"].ToString();
+            //string _date = DT.Columns["date"].ToString();
+            //string _hours = DT.Columns["hours"].ToString();
+            //string _minutes = DT.Columns["minutes"].ToString();
+            //string _office_name = DT.Columns["office_name"].ToString();
+            //string _specializations_name = DT.Columns["specializations_name"].ToString();
+            //string _specialist_name = DT.Columns["specialist_name"].ToString();
+            //string _specialist_email = DT.Columns["specialist_email"].ToString();
+            //string _order_password = DT.Columns["order_password"].ToString();
+            //string _office_desc = DT.Columns["office_desc"].ToString();
+            //string _office_address = DT.Columns["office_address"].ToString();
+            //string _sms_send = DT.Columns["sms_send"].ToString();
+            //string _number_cabinet = DT.Columns["number_cabinet"].ToString();
+
+
+
+
+
+            //  cmd.CommandText ="INSERT INTO ekfgq_ttfsp_dop(id,iduser, id_specialist, ordering, rfio, rphone, info, ipuser, rmail, number_order, cdate, date, hours, minutes, office_name, specializations_name, specialist_name, specialist_email, order_password, office_address, number_cabinet) VALUES(null,@iduser, @id_specialist, @ordering, @rfio, @rphone, @info, @ipuser, @rmail, @number_order, @cdate, @date, @hours, @minutes, @office_name, @specializations_name, @specialist_name, @specialist_email, @order_password, @office_address, @number_cabinet)";
+
+            //#region Command Parametrs
+
+            //cmd.Parameters.AddWithValue("@iduser", _iduser);
+            //cmd.Parameters.AddWithValue("@id_specialist", _id_specialist);
+            //cmd.Parameters.AddWithValue("@ordering", _ordering);
+            //cmd.Parameters.AddWithValue("@rfio", _rfio);
+            //cmd.Parameters.AddWithValue("@rphone", _rphone);
+            //cmd.Parameters.AddWithValue("@info", _info);
+            //cmd.Parameters.AddWithValue("@ipuser", _ipuser);
+            //cmd.Parameters.AddWithValue("@rmail", _rmail);
+            //cmd.Parameters.AddWithValue("@number_order", _number_order);
+            //cmd.Parameters.AddWithValue("@cdate", _cdate);
+            //cmd.Parameters.AddWithValue("@date", _date);
+            //cmd.Parameters.AddWithValue("@hours", _hours);
+            //cmd.Parameters.AddWithValue("@minutes", _minutes);
+            //cmd.Parameters.AddWithValue("@office_name", _office_name);
+            //cmd.Parameters.AddWithValue("@specializations_name", _specializations_name);
+            //cmd.Parameters.AddWithValue("@specialist_name", _specialist_name);
+            //cmd.Parameters.AddWithValue("@specialist_email", _specialist_email);
+            //cmd.Parameters.AddWithValue("@order_password", _order_password);
+            //cmd.Parameters.AddWithValue("@office_address", _office_address);
+            //cmd.Parameters.AddWithValue("@number_cabinet", _number_cabinet);
+
+            //#endregion
+
+
+
+
+
+
+
+
+
+
+
+            //int a = 0;
+            //DataTable dt = new DataTable();
+
+            //MySqlDataReader reader = cmd.ExecuteReader();
+            //dt.Load(reader);
+
+
+
+
+            //using (MySqlDataReader dr = cmd.ExecuteReader())
+            //{
+            //    while (dr.Read())
+            //    {
+            //        a = dr.GetInt32("Checksum");
+
+            //    }
+            //}
+
+            //return dt;
             // GetDoctrosNames(5);
             //   return temp;
         }
