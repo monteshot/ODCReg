@@ -694,8 +694,8 @@ namespace VrachMedcentr
                       //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
                       //}
 
-                      SynhronyzeClass test = new SynhronyzeClass();
-                      test.SynhronyzeTable("ekfgq_ttfsp_dop");
+                      //SynhronyzeClass test = new SynhronyzeClass();
+                      //test.SynhronyzeTable("ekfgq_ttfsp", 2);
 
 
                       int i = 0;

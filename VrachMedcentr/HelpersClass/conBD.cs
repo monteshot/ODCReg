@@ -21,6 +21,7 @@ namespace VrachMedcentr
         public string Password;
         private string stat;
 
+       static SynhronyzeClass synhronyze = new SynhronyzeClass();
         #region Constructors
 
         public conBD()
@@ -47,27 +48,7 @@ namespace VrachMedcentr
         #endregion
 
         #region Helpers Methods
-        /// <summary>
-        /// функция проверки наличия интернет соединения
-        /// </summary>
-        private void CheckConnection()
-        {
-            IPStatus status = IPStatus.Unknown;
-            try
-            {
-                status = new Ping().Send("google.ru").Status;
-            }
-            catch { }
-
-            if (status == IPStatus.Success)
-            {
-                MessageBox.Show("Сервер работает");
-            }
-            else
-            {
-                MessageBox.Show("Сервер временно недоступен!");
-            }
-        }
+        
 
 
         #endregion
@@ -80,6 +61,8 @@ namespace VrachMedcentr
         /// <returns></returns>
         public List<DoctorsList> getList()
         {
+
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprspec",1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -154,6 +137,7 @@ namespace VrachMedcentr
         /// <returns></returns>
         public ObservableCollection<DocNames> GetDoctrosNames(string specialization)
         {
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -196,6 +180,8 @@ namespace VrachMedcentr
 
         public ObservableCollection<DocNames> GetDoctorsNamesFORStartup()
         {
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -237,6 +223,10 @@ namespace VrachMedcentr
         }
         public bool GetDocTimeTalonStatus(int _docid)
         {
+            synhronyze.SynhronyzeTable("talon_time", 1);
+
+            synhronyze.SynhronyzeTable("talon_time", 2);
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -276,6 +266,13 @@ namespace VrachMedcentr
         #region GET DOCTORS TIMES
         public List<Times> getDocTimes(string docId, string docTimeId, DateTime date)
         {
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 1);
+
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
+
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop",1);
+
+            
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -346,6 +343,8 @@ namespace VrachMedcentr
         /// <returns></returns>
         public bool CheckDoctorList(string _doctimeid)
         {
+            //синхронизациия не нужна я думаю           
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -410,7 +409,9 @@ namespace VrachMedcentr
             cmd.CommandText = "UPDATE ekfgq_ttfsp_sprtime SET timeprv=@privaTetime WHERE id = @docId";//',9,'
             cmd.Parameters.AddWithValue("@privaTetime", privaTetime);
             cmd.Connection = con;
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();           
+
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
 
         }
 
@@ -463,6 +464,8 @@ namespace VrachMedcentr
         #endregion
         public ObservableCollection<DateTime> GetListOfWorkingDays(int _docId)
         {
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 1);
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -540,6 +543,8 @@ namespace VrachMedcentr
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
             con.Close();
+
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp",2);
         }
 
         public void remWorkDays(string idSpec, DateTime dttime)
@@ -563,16 +568,20 @@ namespace VrachMedcentr
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
             con.Close();
+
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
         }
+
         /// <summary>
         ///  Поллучение записей на конкретную дату для выбраного доктора
         /// </summary>
         /// <param name="docId">ІD доктора</param>
         /// <param name="TimeAppointments"> Дата для поиска</param>
         /// <returns></returns>
-
         public ObservableCollection<Appointments> GetAppointments(string docId, DateTime TimeAppointments)
         {
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -619,6 +628,8 @@ namespace VrachMedcentr
 
         public ObservableCollection<Users> GetUsers()
         {
+            synhronyze.SynhronyzeTable("ekfgq_users",1);
+
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -757,7 +768,7 @@ namespace VrachMedcentr
 
                 }
             }
-
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 2);
 
         }
 
@@ -894,6 +905,10 @@ namespace VrachMedcentr
 
                 temp = GetNumberOrder();
             }
+            else
+            {
+                _ILimit = 1;
+            }
 
             return temp;
 
@@ -946,6 +961,8 @@ namespace VrachMedcentr
 
                 }
             }
+
+            synhronyze.SynhronyzeTable("talon_time", 2);
         }
 
         #endregion
