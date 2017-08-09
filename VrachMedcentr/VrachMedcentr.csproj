@@ -136,9 +136,6 @@
     <Compile Include="Data\TablesData\OblickTable.cs" />
     <Compile Include="Data\TablesData\TextInputToVisibilityConverter.cs" />
     <Compile Include="HelpersClass\SynhronyzeClass.cs" />
-    <Compile Include="View\confirmation.xaml.cs">
-      <DependentUpon>confirmation.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Data\Diagnoses\TestDiagnoz.cs" />
     <Compile Include="Data\Registration Model\Appointments.cs" />
     <Compile Include="Data\Registration Model\DoctorsList.cs" />
@@ -158,10 +155,6 @@
     <Compile Include="ViewModel\EditTimesViewModel.cs" />
     <Compile Include="ViewModel\regViewModel.cs" />
     <Compile Include="ViewModel\update.cs" />
-    <Page Include="View\confirmation.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\editDays.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

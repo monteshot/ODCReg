@@ -19,6 +19,7 @@ namespace VrachMedcentr
         DataTable Web = new DataTable();
         DataTable Local = new DataTable();
 
+        public bool InternetConnectionStatus { get; set; }//временное решение сделать бы визуальное оповещение
         #region Synhronyza Tables
 
         /// <summary>
@@ -31,27 +32,39 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>
-        public void SynhronyzeTable(string _TableName, int _mod)
+        public async void SynhronyzeTable(string _TableName, int _mod)
         {
-            TableName = _TableName;
-            Web = GetTable(conWeb);
-            Local = GetTable(conLocal);
+
+            if (CheckConnection())
+            {
+                TableName = _TableName;
+                //Web = await AsyncGetTable(conWeb);
+                //Local = await AsyncGetTable(conLocal);
+
+                Web = GetTable(conWeb);
+                Local = GetTable(conLocal);
 
 
-            //Web = con.get3apTime();
-            //Local = conLocal.get3apTime();
-            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-            List<DataRow> t1 = Web.AsEnumerable().ToList<DataRow>();
-            Compare(_mod);
+                //Web = con.get3apTime();
+                //Local = conLocal.get3apTime();
+                List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
+                List<DataRow> t1 = Web.AsEnumerable().ToList<DataRow>();
+                Compare(_mod);
 
-            List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
 
-            //foreach (var a in t)
-            //{
-            //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
-            //}
-            int i = 0;//маркер точки останова
 
+                //foreach (var a in t)
+                //{
+                //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
+                //}
+                int i = 0;//маркер точки останова
+                InternetConnectionStatus = true;
+
+            }
+            else
+            {
+                InternetConnectionStatus = false;
+            }
 
         }
 
@@ -80,6 +93,9 @@ namespace VrachMedcentr
                                 && rl.Field<string>("hours") == rw.Field<string>("hours")
                                 && rl.Field<string>("minutes") == rw.Field<string>("minutes")
                                 && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
+                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                            //conLocal.insert_ekfgq_ttfsp_dop(Local);
+                            // Local.Clear();
                         }
                         else
                         {
@@ -89,6 +105,9 @@ namespace VrachMedcentr
                                 && rl.Field<string>("hours") == rw.Field<string>("hours")
                                 && rl.Field<string>("minutes") == rw.Field<string>("minutes")
                                 && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
+
+                            // conWeb.insert_ekfgq_ttfsp_dop(Local);
+                            // Local.Clear();
                         }
                         break;
                     case "ekfgq_ttfsp":
@@ -137,12 +156,16 @@ namespace VrachMedcentr
                             Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
                                 Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
                                 && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
+                            //conLocal.insert_ekfgq_ttfsp_sprtime(Local);
+                            //Local.Clear();
                         }
                         if (_mod == 2)
                         {
                             Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
                                 Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
                                 && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
+                            //conWeb.insert_ekfgq_ttfsp_sprtime(Local);
+                            //Local.Clear();
                         }
                         break;
                     case "ekfgq_users":
@@ -152,6 +175,8 @@ namespace VrachMedcentr
                                 Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
                                 && rl.Field<string>("username") == rw.Field<string>("username")
                                 && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
+                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                            conLocal.insert_ekfgq_users(Local);
                         }
                         break;
 
@@ -177,7 +202,7 @@ namespace VrachMedcentr
             }
             catch (InvalidOperationException e)
             {
-                MessageBox.Show(e.ToString());
+                // MessageBox.Show(e.ToString());
             }
 
 
@@ -187,7 +212,7 @@ namespace VrachMedcentr
         /// <summary>
         /// функция проверки наличия интернет соединения
         /// </summary>
-        private void CheckConnection()
+        private bool CheckConnection()
         {
             IPStatus status = IPStatus.Unknown;
             try
@@ -198,10 +223,12 @@ namespace VrachMedcentr
 
             if (status == IPStatus.Success)
             {
+                return true;
                 //MessageBox.Show("Сервер работает");
             }
             else
             {
+                return false;
                 //MessageBox.Show("Сервер временно недоступен!");
             }
         }
@@ -212,8 +239,58 @@ namespace VrachMedcentr
         /// <param name="_WebTablName">Имя желаемой таблицы</param>
         /// <param name="_DBConnection">Параметры подключения(База данных локальная/веб)</param>
         /// <returns></returns>
+        private Task<DataTable> AsyncGetTable(conBD _DBConnection)
+        {
+
+            return Task.Run(() =>
+            {
+
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = _DBConnection.server;
+                mysqlCSB.Database = _DBConnection.database;
+                mysqlCSB.UserID = _DBConnection.UserID;
+                mysqlCSB.Password = _DBConnection.Password;
+                // mysqlCSB.ConvertZeroDateTime = true;
+                mysqlCSB.AllowZeroDateTime = true;
+
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
+
+                // MessageBox.Show(con.State.ToString());
+                con.Close();
+                con.OpenAsync();
+
+
+                //MessageBox.Show(con.State.ToString());
+                cmd.CommandText = "SELECT * FROM " + TableName;
+                //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
+                cmd.Connection = con;
+                cmd.ExecuteNonQuery();
+
+                DataTable dt = new DataTable();
+
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                dt.Load(reader);
+                con.CloseAsync();
+                con.Close();
+                return dt;
+
+
+
+
+            });
+
+
+        }
+
+
         private DataTable GetTable(conBD _DBConnection)
         {
+
+
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -227,7 +304,13 @@ namespace VrachMedcentr
             MySqlConnection con = new MySqlConnection();
             con.ConnectionString = mysqlCSB.ConnectionString;
             MySqlCommand cmd = new MySqlCommand();
-            con.Open();
+
+            // MessageBox.Show(con.State.ToString());
+            con.Close();
+            con.OpenAsync();
+
+
+            //MessageBox.Show(con.State.ToString());
             cmd.CommandText = "SELECT * FROM " + TableName;
             //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
             cmd.Connection = con;
@@ -238,8 +321,14 @@ namespace VrachMedcentr
             MySqlDataReader reader = cmd.ExecuteReader();
 
             dt.Load(reader);
+            con.CloseAsync();
             con.Close();
             return dt;
+
+
+
+
+
         }
 
         #endregion
