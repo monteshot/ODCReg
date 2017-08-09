@@ -26,12 +26,12 @@ namespace WPF_Hospital
     /// </summary>
     public partial class MainWindow : Window
     {
-       // VrachMedcentr.View.StartUPView start = new VrachMedcentr.View.StartUPView();
+        // VrachMedcentr.View.StartUPView start = new VrachMedcentr.View.StartUPView();
 
         /// <summary>
         /// ПОЛЕЗНЕЙШАЯ ХРЕНЬ! Выявляет ошибки байдиннга
         /// </summary>
-
+        conBD con = new conBD();
         #region Binding Error Shower
         public class BindingErrorTraceListener : TraceListener
         {
@@ -61,7 +61,8 @@ namespace WPF_Hospital
             var currVer = Assembly.GetExecutingAssembly().GetName().Version;
             Title += " Версія: " + currVer; //не выпиливать! дает версию в заголовке аппы
 
-           
+         //   datatable.DataContext = con.getHash();
+
             //CardPages CP = new CardPages();
 
             //// ниже идут датаконтесты, которые были подвязаны во CardPages !!!!!!!НУЖНО ПЕРЕДЕЛАТЬ!!!!!
@@ -73,7 +74,7 @@ namespace WPF_Hospital
             //DPage3.ItemsSource = CP.Card3; // личток заключительных дигнозов
             //DPage4.ItemsSource = CP.Card4; //рентген
             //DPage5.ItemsSource = CP.Card5;
-            
+
             //Testersitem.DataContext = new DiagnosesViewModel();
             // Update.DataContext = new update();
             update updater = new update();
@@ -114,7 +115,7 @@ namespace WPF_Hospital
 
 
         }
-       
+
 
         //  public DoctorsList.DocNames bab;
 
@@ -134,19 +135,19 @@ namespace WPF_Hospital
         {
 
             i++;
-          
+
         }
 
         private void AddNewPage(object sender, MouseButtonEventArgs e)
         {
             i++;
-           
+
         }
 
 
         private void Delate(object sender, RoutedEventArgs e)
         {
-           
+
         }
         //     regViewModel rvm = new regViewModel();
         private void Regis_Selected(object sender, RoutedEventArgs e)
