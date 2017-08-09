@@ -931,8 +931,6 @@ namespace VrachMedcentr
             mysqlCSB.ConvertZeroDateTime = true;
 
 
-
-
             using (MySqlConnection con = new MySqlConnection(mysqlCSB.ConnectionString))
             {
                 using (MySqlCommand cmd = new MySqlCommand())
