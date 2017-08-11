@@ -170,6 +170,7 @@ namespace VrachMedcentr
 
             foreach (DataRow z in DT.Rows)
             {
+                //дороботать
                 string fg = $"(";
                 for (int i = 1; i <= 29; i++)
                 {
