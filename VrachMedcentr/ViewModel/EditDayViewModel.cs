@@ -59,7 +59,7 @@ namespace VrachMedcentr
 
                               foreach (var time in currTimes)
                               {
-                                  string[] parTime = time.Time.Split(new char[] { ':' });
+                                  string[] parTime = time.Label.Split(new char[] { ':' });
 
                                   con.addWorkDays(docSelected.docID, "0", false, true, a, parTime[0], parTime[1], "0", "0");
                               }

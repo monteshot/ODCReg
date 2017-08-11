@@ -268,15 +268,15 @@
 
                     <ListBox Grid.Row="0" ItemsSource="{Binding DoctorTimes , UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,5"
                  SelectedItem="{Binding SelectedTime}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Foreground="{Binding Status}"  FontSize="18" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1" FontSize="18" Text="{Binding TimeProperties, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition></ColumnDefinition>
+                                                <ColumnDefinition></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Foreground="{Binding Status}"  FontSize="18" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" FontSize="18" Text="{Binding TimeProperties, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
 
                                 </Grid>
                                 <!--<StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -338,7 +338,7 @@
                 </Grid>
 
             </Grid>
-            <ListBox Grid.Row="1"  SelectedItem="{Binding SSelectedUser,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+            <ListBox Grid.Row="1"  SelectedItem="{Binding SSelectedUser,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding Appointments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                 <ListBox.Template>
                     <ControlTemplate>
                         <DockPanel LastChildFill="True"  >
@@ -362,10 +362,42 @@
                         </DockPanel>
                     </ControlTemplate>
                 </ListBox.Template>
+                <ListBox.ItemTemplate>
+
+
+                    <DataTemplate>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.7*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.32*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.22*"></ColumnDefinition>
+                                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <!--<TextBlock Grid.Column="0" FontSize="20" Text="№"/>-->
+                            <TextBlock Margin="10,0,0,0" Grid.Column="0" FontSize="20" Text="{Binding NumberZP}"/>
+                            <!--<TextBlock Grid.Column="1" FontSize="20" Text=" | ПІБ: "/>-->
+                            <TextBlock Margin="10,0,0,0" Grid.Column="1" FontSize="20" Text="{Binding Pacient}"/>
+                            <!--<TextBlock Grid.Column="2" FontSize="20" Text=" | Час: "/>-->
+                            <TextBlock Margin="10,0,0,0" Grid.Column="2" FontSize="20" Text="{Binding TimeAppomination}"/>
+                            <!--<TextBlock Grid.Column="3" FontSize="20" Text=" | Коментар: "/>-->
+                            <TextBlock Margin="10,0,0,0" Grid.Column="3" FontSize="20" Text="{Binding Comment}"/>
+                            <!--<TextBlock Grid.Column="4" FontSize="20" Text=" | Не прийшов: "/>-->
+                            <CheckBox Grid.Column="4" FontSize="20" IsChecked="{Binding NotComing}"/>
+                            <!--<TextBlock Grid.Column="5" FontSize="20" Text=" | uID: "/>-->
+                            <TextBlock Margin="10,0,0,0" Grid.Column="5" FontSize="20" Text="{Binding IDUser}"/>
+
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
-            <DataGrid x:Name="datatable" ItemsSource="{Binding localBD}"  Margin="-380,136,0,10" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Left" Width="557"/>
+            <!--<DataGrid x:Name="datatable" ItemsSource="{Binding localBD}"  Margin="-380,136,0,10" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Left" Width="557"/>
             <DataGrid x:Name="datatable_Copy" ItemsSource="{Binding siteBD}"  Margin="266,136,10,10" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1"/>
-            <DataGrid x:Name="datatable_Copy1" ItemsSource="{Binding resultBD}"  Margin="-129,55,239,448" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.RowSpan="2"/>
+            <DataGrid x:Name="datatable_Copy1" ItemsSource="{Binding resultBD}"  Margin="-129,55,239,448" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.RowSpan="2"/>-->
             <!--<DataGrid  Margin="0,10,0,0" FontSize="15" Foreground="White" Grid.Row="1"   
                                AutoGenerateColumns="False" ItemsSource="{Binding Appointments}" Style="{DynamicResource GrayDataGrid}" 
                                CellStyle="{DynamicResource GrayDataGridCellStyle}" RowStyle="{DynamicResource GrayGridRowStyle}" SelectedValue="{Binding SSelectedUser}" SelectedItem="{Binding SSelectedUser}" RowHeaderStyle="{DynamicResource GrayDataGridRowHeaderStyle}" 
