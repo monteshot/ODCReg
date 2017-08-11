@@ -48,7 +48,9 @@ namespace VrachMedcentr
         #endregion
 
         #region Helpers Methods
-        public Task<string> GetTableHash(string _tablename)
+        public delegate Task<string> AddTableHashDelegate(string azazaza);
+      
+        public  Task<string> GetTableHash(string _tablename)
         {
             return Task.Run(() =>
             {
@@ -334,7 +336,7 @@ namespace VrachMedcentr
         /// Занимается инсертом в таблицу _рабочих дней всех врачей
         /// </summary>
         /// <param name="DT"></param>
-        public void insert_ekfgq_ttfsp(DataTable DT)
+        public  void insert_ekfgq_ttfsp(DataTable DT)
         {
             //ПЕРЕДЕЛАТЬ НА АПДЕЙТ ИНСЕРТ
             MySqlConnectionStringBuilder mysqlCSB;

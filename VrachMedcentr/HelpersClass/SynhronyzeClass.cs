@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Reflection;
 namespace VrachMedcentr
 {
     class SynhronyzeClass : conBD
@@ -39,9 +40,20 @@ namespace VrachMedcentr
             if (CheckConnection())
             {
                 //розкоментить для отладки
-                string WebTableHash = await conWeb.GetTableHash(_TableName);
-                string LocalTableHash = await conLocal.GetTableHash(_TableName);
+                //string WebTableHash;
+                //string LocalTableHash;
+                
+                var dispatcher = Application.Current.MainWindow.Dispatcher;
+              
+               // WebTableHash= await dispatcher.BeginInvoke(new AddTableHashDelegate(conWeb.GetTableHash));
+                  string WebTableHash = await conWeb.GetTableHash(_TableName);
+                 string LocalTableHash = await conLocal.GetTableHash(_TableName);
+                AddTableHashDelegate web=new AddTableHashDelegate(conWeb.GetTableHash);
+                AddTableHashDelegate local = new AddTableHashDelegate(conLocal.GetTableHash);
 
+                await  web.Invoke(_TableName);
+                await local.Invoke(_TableName);
+                //z.BeginInvoke(_TableName);
 
                 if (WebTableHash != LocalTableHash)
                 {
@@ -263,7 +275,7 @@ namespace VrachMedcentr
             IPStatus status = IPStatus.Unknown;
             try
             {
-                status = new Ping().Send("google.ru").Status;
+                status = new Ping().Send("google.com.ua").Status;
             }
             catch { }
 
