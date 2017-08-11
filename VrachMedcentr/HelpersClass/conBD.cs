@@ -520,7 +520,7 @@ namespace VrachMedcentr
 
 
 
-            StringBuilder MegaCom = new StringBuilder("UPDATE ekfgq_ttfsp_sprtime(name, published,desc,timehm,checked_out,checked_out_time,ordering,timeprv) SET " + $"('{DT..Columns[1].ToString()}','{DT.Columns[2].ToString()}','{DT.Columns[3].ToString()}','{DT.Columns[4].ToString()}','{DT.Columns[5].ToString()}','{DT.Columns[6].ToString()}','{DT.Columns[7].ToString()}','{DT.Columns[8].ToString()}')"+"WHERE id="+ DT.Columns[8].ToString());
+            StringBuilder MegaCom = new StringBuilder("UPDATE ekfgq_ttfsp_sprtime(name, published,desc,timehm,checked_out,checked_out_time,ordering,timeprv) SET " + $"('{DT.Columns[1].ToString()}','{DT.Columns[2].ToString()}','{DT.Columns[3].ToString()}','{DT.Columns[4].ToString()}','{DT.Columns[5].ToString()}','{DT.Columns[6].ToString()}','{DT.Columns[7].ToString()}','{DT.Columns[8].ToString()}')"+"WHERE id="+ DT.Columns[8].ToString());
            // List<string> Rw = new List<string>();
 
             //foreach (DataRowCollection z in DT.Rows)
