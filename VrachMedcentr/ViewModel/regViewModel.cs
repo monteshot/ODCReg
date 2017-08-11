@@ -88,7 +88,7 @@ namespace VrachMedcentr
             {
                 OneTimeUsers.Add(a.userFIO);
             }
-            DoctorTimes = new ObservableCollection<Times>();
+            DoctorTimes = new List<Times>();
             try
             {
                 DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
@@ -361,37 +361,37 @@ namespace VrachMedcentr
         conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
         #endregion
 
-        #region Constructor
+        
 
-        public regViewModel()
-        {
-            // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
-            //CheckConnection();
-             DateDoctorAcepting = DateTime.Today;
-            ListOfSpecf = con.getList();
-            ListOfUsers = con.GetUsers();
+        //public regViewModel()
+        //{
+        //    // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
+        //    //CheckConnection();
+        //     DateDoctorAcepting = DateTime.Today;
+        //    ListOfSpecf = con.getList();
+        //    ListOfUsers = con.GetUsers();
            
 
-            // DateDoctorAcepting = DateTime.Parse("2017-07-07");
+        //    // DateDoctorAcepting = DateTime.Parse("2017-07-07");
 
 
-            Users = OneTimeUsers;
+        //    Users = OneTimeUsers;
 
 
-            foreach (var a in ListOfUsers)
-            {
-                OneTimeUsers.Add(a.userFIO);
-            }
-            DoctorTimes = new List<Times>();
-            try
-            {
-                DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
-                OneTimeDoctorTimes = DoctorTimes;
-            }
-            catch { }
-          //  localDB.save2("473", "SUG+", "AL+", "Inf+");
+        //    foreach (var a in ListOfUsers)
+        //    {
+        //        OneTimeUsers.Add(a.userFIO);
+        //    }
+        //    DoctorTimes = new List<Times>();
+        //    try
+        //    {
+        //        DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
+        //        OneTimeDoctorTimes = DoctorTimes;
+        //    }
+        //    catch { }
+        //  //  localDB.save2("473", "SUG+", "AL+", "Inf+");
 
-        }
+        //}
 
 
         //  public DoctorsList.DocNames sas { get; set; }
