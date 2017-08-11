@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -35,37 +36,47 @@ namespace VrachMedcentr
         public async void SynhronyzeTable(string _TableName, int _mod)
         {
 
+
+            TableName = _TableName;
             if (CheckConnection())
             {
-                TableName = _TableName;
-                //Web = await AsyncGetTable(conWeb);
-                //Local = await AsyncGetTable(conLocal);
+                //розкоментить для отладки
+                string WebTableHash = await conWeb.GetTableHash(_TableName);
+                string LocalTableHash = await conLocal.GetTableHash(_TableName);
 
-                Web = GetTable(conWeb);
-                Local = GetTable(conLocal);
+                if (WebTableHash != LocalTableHash)
+                {
+                    
+                    Web = await AsyncGetTable(conWeb);
+                    Local = await AsyncGetTable(conLocal);
 
-
-                //Web = con.get3apTime();
-                //Local = conLocal.get3apTime();
-                List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
-                List<DataRow> t1 = Web.AsEnumerable().ToList<DataRow>();
-                Compare(_mod);
-
+                    //Web = GetTable(conWeb);
+                    //Local = GetTable(conLocal);
 
 
-                //foreach (var a in t)
-                //{
-                //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
-                //}
-                int i = 0;//маркер точки останова
-                InternetConnectionStatus = true;
+                    //Web = con.get3apTime();
+                    //Local = conLocal.get3apTime();
+                    List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
+                    List<DataRow> t1 = Web.AsEnumerable().ToList<DataRow>();
+                    Compare(_mod);
 
+
+
+                    //foreach (var a in t)
+                    //{
+                    //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
+                    //}
+                    int i = 0;//маркер точки останова
+                    InternetConnectionStatus = true;
+                }
+
+               
             }
+
             else
             {
                 InternetConnectionStatus = false;
             }
-
         }
 
         /// <summary>
@@ -75,7 +86,7 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)\r
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>
-        private void Compare(int _mod)
+        private async void Compare( int _mod)
         {
             try
             {
@@ -94,10 +105,10 @@ namespace VrachMedcentr
                                 && rl.Field<string>("minutes") == rw.Field<string>("minutes")
                                 && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                            //conLocal.insert_ekfgq_ttfsp_dop(Local);
-                            // Local.Clear();
+                           // conLocal.insert_ekfgq_ttfsp_dop(Local);
+                             Local.Clear();
                         }
-                        else
+                       if(_mod==2)                        
                         {
                             Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
                                 Any(rl => rl.Field<string>("rfio") == rw.Field<string>("rfio")
@@ -105,9 +116,9 @@ namespace VrachMedcentr
                                 && rl.Field<string>("hours") == rw.Field<string>("hours")
                                 && rl.Field<string>("minutes") == rw.Field<string>("minutes")
                                 && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
-
-                            // conWeb.insert_ekfgq_ttfsp_dop(Local);
-                            // Local.Clear();
+                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                             //conWeb.insert_ekfgq_ttfsp_dop(Local);
+                             Local.Clear();
                         }
                         break;
                     case "ekfgq_ttfsp":
@@ -142,12 +153,17 @@ namespace VrachMedcentr
                             Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
                                 Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
                                 && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
+                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                            conLocal.insert_ekfgq_ttfsp_sprspec(Local);
+                            Local.Clear();
                         }
                         if (_mod == 2)
                         {
                             Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
                                 Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
                                 && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
+                            conWeb.insert_ekfgq_ttfsp_sprspec(Local);
+                            Local.Clear();
                         }
                         break;
                     case "ekfgq_ttfsp_sprtime":
@@ -176,7 +192,8 @@ namespace VrachMedcentr
                                 && rl.Field<string>("username") == rw.Field<string>("username")
                                 && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                            conLocal.insert_ekfgq_users(Local);
+                            await conLocal.insert_ekfgq_users(Local);
+                            Local.Clear();
                         }
                         break;
 
@@ -202,7 +219,7 @@ namespace VrachMedcentr
             }
             catch (InvalidOperationException e)
             {
-                // MessageBox.Show(e.ToString());
+                 MessageBox.Show(e.ToString());
             }
 
 

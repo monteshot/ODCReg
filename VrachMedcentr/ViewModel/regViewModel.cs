@@ -48,7 +48,7 @@ namespace VrachMedcentr
             // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
             //CheckConnection();
             DateDoctorAcepting = DateTime.Today;
-            ListOfSpecf = con.getList();
+            ListOfSpecf = con.GetDocSpecification();
             ListOfUsers = con.GetUsers();
 
             Users = OneTimeUsers;

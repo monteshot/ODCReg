@@ -48,15 +48,53 @@ namespace VrachMedcentr
         #endregion
 
         #region Helpers Methods
+        public Task<string> GetTableHash(string _tablename)
+        {
+            return Task.Run(() =>
+            {
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = server;
+                mysqlCSB.Database = database;
+                mysqlCSB.UserID = UserID;
+                mysqlCSB.Password = Password;
+                mysqlCSB.ConvertZeroDateTime = true;
 
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
+
+                string a = "";
+
+
+
+                con.Open();
+                cmd.CommandText = "CHECKSUM TABLE " + _tablename;
+
+
+                cmd.Connection = con;
+                cmd.ExecuteNonQuery();
+
+                using (MySqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        a = dr.GetString("Checksum");
+                    }
+                }
+                con.Close();
+                return a;
+            });
+
+
+
+        }
 
 
         #endregion
 
 
         #region Work with data like DataTable
-             
-
         /// <summary>
         /// Метод загрузки записей на прием всех врачей
         /// </summary>
@@ -120,28 +158,53 @@ namespace VrachMedcentr
             //string[] tempArray = tempOrder.Split(new char[] { '-' });
             //tempOrder = tempArray[0];
 
-            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_dop(id,idrec, iduser, id_specialist, published, ordering,checked_out, checked_out_time, rfio, rphone, info, ipuser, rmail, summa,payment_status, number_order, cdate, date, hours, minutes, office_name, specializations_name, specialist_name, specialist_email,specialist_phone, order_password,office_desc, office_address, number_cabinet) VALUES ");
+            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_dop(idrec, iduser, id_specialist, published, ordering,checked_out, checked_out_time, rfio, rphone, info, ipuser, rmail, summa,payment_status, number_order, cdate, date, hours, minutes, office_name, specializations_name, specialist_name, specialist_email,specialist_phone, order_password,office_desc, office_address, number_cabinet) VALUES ");
             List<string> Rw = new List<string>();
-
+            List<string> Rw1 = new List<string>();
+            
             foreach (DataRow z in DT.Rows)
             {
-               
-                Rw.Add($"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}','{z[9].ToString()}','{z[10].ToString()}','{z[11].ToString()}','{z[12].ToString()}','{z[13].ToString()}','{z[14].ToString()}','{z[15].ToString()}','{z[16].ToString()}','{z[17].ToString()}','{z[18].ToString()}','{z[19].ToString()}','{z[20].ToString()}','{z[21].ToString()}','{z[22].ToString()}','{z[23].ToString()}','{z[24].ToString()}','{z[25].ToString()}','{z[26].ToString()}','{z[27].ToString()}','{z[28].ToString()}','{z[29].ToString()}')");
+                string fg = $"(";
+                for (int i = 1; i<=29;i++)
+                {
+                    if (i == 29)
+                    {
+                        fg = fg + "'" + MySqlHelper.EscapeString(z[i].ToString()) + "'";
+                    }
+                    else
+                    {
+                        fg = fg + "'" + MySqlHelper.EscapeString(z[i].ToString()) + "',";
+                    }
+                   
+                }
+                fg = fg + ")";
+                Rw1.Add(fg);
+                fg = "";
+                Rw.Add($"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString(z[2].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[3].ToString())}','{MySqlHelper.EscapeString(z[4].ToString())}','{MySqlHelper.EscapeString(z[5].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[6].ToString())}','{MySqlHelper.EscapeString(z[7].ToString())}','{MySqlHelper.EscapeString(z[8].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[9].ToString())}','{MySqlHelper.EscapeString(z[10].ToString())}','{MySqlHelper.EscapeString(z[11].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[12].ToString())}','{MySqlHelper.EscapeString(z[13].ToString())}','{MySqlHelper.EscapeString(z[14].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[15].ToString())}','{MySqlHelper.EscapeString(z[16].ToString())}','{MySqlHelper.EscapeString(z[17].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[18].ToString())}','{MySqlHelper.EscapeString(z[19].ToString())}','{MySqlHelper.EscapeString(z[20].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[21].ToString())}','{MySqlHelper.EscapeString(z[22].ToString())}','{MySqlHelper.EscapeString(z[23].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[24].ToString())}','{MySqlHelper.EscapeString(z[25].ToString())}','{MySqlHelper.EscapeString(z[26].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[27].ToString())}','{MySqlHelper.EscapeString(z[28].ToString())}','{MySqlHelper.EscapeString(z[29].ToString())}')");
             }
 
-            MegaCom.Append(string.Join(",", Rw));
+            MegaCom.Append(string.Join(",", Rw1));
             MegaCom.Append(";");
 
             con.Close();
             con.Open();
             cmd.Connection = con;
-           // con.OpenAsync();
+            // con.OpenAsync();
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = MegaCom.ToString();
             cmd.ExecuteNonQuery();
             cmd.Parameters.Clear();
             con.Close();
-          //  con.Close();
+            //  con.Close();
 
             //string _iduser = DT.Columns["iduser"].ToString();
             //string _idrec = DT.Columns["idrec"].ToString();
@@ -266,7 +329,7 @@ namespace VrachMedcentr
         /// <param name="DT"></param>
         public void insert_ekfgq_ttfsp(DataTable DT)
         {
-
+            //ПЕРЕДЕЛАТЬ НА АПДЕЙТ ИНСЕРТ
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
             mysqlCSB.Server = server;
@@ -285,7 +348,7 @@ namespace VrachMedcentr
             StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp(id,idspec, iduser, reception, published, dttime ,hrtime,mntime,ordering ,checked_out, checked_out_time, rfio, rphone, info, ipuser, ttime, plimit,pricezap ,rmail,sms) VALUES ");
             List<string> Rw = new List<string>();
 
-            foreach (DataRowCollection z in DT.Rows)
+            foreach (DataRow z in DT.Rows)
             {
                 Rw.Add(
                     $"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}','{z[9].ToString()}','{z[10].ToString()}','{z[11].ToString()}','{z[12].ToString()}','{z[13].ToString()}','{z[14].ToString()}','{z[15].ToString()}','{z[16].ToString()}','{z[17].ToString()}','{z[18].ToString()}','{z[19].ToString()}')");
@@ -342,50 +405,47 @@ namespace VrachMedcentr
         /// Занимается инсертом в таблицу _юзверей
         /// </summary>
         /// <param name="DT"></param>
-        public void insert_ekfgq_users(DataTable DT)
+        public Task insert_ekfgq_users(DataTable DT)
         {
 
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-
-            mysqlCSB.AllowZeroDateTime = true;
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-
-
-
-            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_users(name, username, email, password, block ,sendEmail,registerDate,lastvisitDate,activation, params, lastResetTime, resetCount,otpKey,otep,requireReset,fio,phone) VALUES ");
-            List<string> Rw = new List<string>();
-
-            foreach (DataRow z in DT.Rows)
+            return Task.Run(() =>
             {
-                Rw.Add(
-                    $"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString(z[2].ToString())}','{MySqlHelper.EscapeString(z[3].ToString())}','{MySqlHelper.EscapeString(z[4].ToString())}','{MySqlHelper.EscapeString(z[5].ToString())}','{MySqlHelper.EscapeString(z[6].ToString())}','{MySqlHelper.EscapeString(z[7].ToString())}','{MySqlHelper.EscapeString(z[8].ToString())}','{MySqlHelper.EscapeString(z[9].ToString())}','{MySqlHelper.EscapeString(z[10].ToString())}','{MySqlHelper.EscapeString(z[11].ToString())}','{MySqlHelper.EscapeString(z[12].ToString())}','{MySqlHelper.EscapeString(z[13].ToString())}','{MySqlHelper.EscapeString(z[14].ToString())}','{MySqlHelper.EscapeString(z[15].ToString())}','{MySqlHelper.EscapeString(z[16].ToString())}','{MySqlHelper.EscapeString(z[17].ToString())}')");
-            }
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = server;
+                mysqlCSB.Database = database;
+                mysqlCSB.UserID = UserID;
+                mysqlCSB.Password = Password;
 
-            MegaCom.Append(string.Join(",", Rw));
-            MegaCom.Append(";");
+                mysqlCSB.AllowZeroDateTime = true;
+
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
 
 
 
-         
+                StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_users(name, username, email, password, block ,sendEmail,registerDate,lastvisitDate,activation, params, lastResetTime, resetCount,otpKey,otep,requireReset,fio,phone) VALUES ");
+                List<string> Rw = new List<string>();
 
-            con.Open();
-            cmd.Connection = con;
-            cmd.CommandType = CommandType.Text;
+                foreach (DataRow z in DT.Rows)
+                {
+                    Rw.Add(
+                        $"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString(z[2].ToString())}','{MySqlHelper.EscapeString(z[3].ToString())}','{MySqlHelper.EscapeString(z[4].ToString())}','{MySqlHelper.EscapeString(z[5].ToString())}','{MySqlHelper.EscapeString(z[6].ToString())}','{MySqlHelper.EscapeString(z[7].ToString())}','{MySqlHelper.EscapeString(z[8].ToString())}','{MySqlHelper.EscapeString(z[9].ToString())}','{MySqlHelper.EscapeString(z[10].ToString())}','{MySqlHelper.EscapeString(z[11].ToString())}','{MySqlHelper.EscapeString(z[12].ToString())}','{MySqlHelper.EscapeString(z[13].ToString())}','{MySqlHelper.EscapeString(z[14].ToString())}','{MySqlHelper.EscapeString(z[15].ToString())}','{MySqlHelper.EscapeString(z[16].ToString())}','{MySqlHelper.EscapeString(z[17].ToString())}')");
+                }
 
-            
-            cmd.CommandText = MegaCom.ToString();
-            cmd.ExecuteNonQuery();
-            cmd.Parameters.Clear();
-            con.Close();
+                MegaCom.Append(string.Join(",", Rw));
+                MegaCom.Append(";");
 
+                con.Open();
+                cmd.Connection = con;
+                cmd.CommandType = CommandType.Text;
+
+                cmd.CommandText = MegaCom.ToString();
+                cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
+                con.Close();
+            });
 
         }
         /// <summary>
@@ -523,13 +583,15 @@ namespace VrachMedcentr
 
 
 
-            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_sprspec(id,name, published,photo,desc,off_photo,checked_out_time,ordering) VALUES ");
+            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_sprspec(name, published,photo,desc,off_photo,checked_out_time,ordering) VALUES ");
             List<string> Rw = new List<string>();
 
-            foreach (DataRowCollection z in DT.Rows)
+            foreach (DataRow z in DT.Rows)
             {
                 Rw.Add(
-                    $"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}')");
+                    $"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString(z[2].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[3].ToString())}','{MySqlHelper.EscapeString(z[4].ToString())}','{MySqlHelper.EscapeString(z[5].ToString())}'," +
+                    $"'{MySqlHelper.EscapeString(z[6].ToString())}','{MySqlHelper.EscapeString(z[7].ToString())}','{MySqlHelper.EscapeString(z[8].ToString())}')");
             }
 
             MegaCom.Append(string.Join(",", Rw));
@@ -646,13 +708,113 @@ namespace VrachMedcentr
         #region Methd for work with data like ObsCollection
 
 
+        /// <summary>
+        ///  Поллучение записей на конкретную дату для выбраного доктора
+        /// </summary>
+        /// <param name="docId">ІD доктора</param>
+        /// <param name="TimeAppointments"> Дата для поиска</param>
+        /// <returns></returns>
+        public ObservableCollection<Appointments> GetAppointments(string docId, DateTime TimeAppointments)
+        {
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+            mysqlCSB.ConvertZeroDateTime = true;
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+
+            int i = 0;
+
+            ObservableCollection<Appointments> temp = new ObservableCollection<Appointments>();
+
+            con.Open();
+            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop WHERE id_specialist = @DocID AND date = @Date";
+            cmd.Parameters.AddWithValue("@DocID", docId);
+            cmd.Parameters.AddWithValue("@Date", TimeAppointments);
+            cmd.Connection = con;
+            cmd.ExecuteNonQuery();
+            using (MySqlDataReader dr = cmd.ExecuteReader())
+            {
+                while (dr.Read())
+                {
+                    i++;
+                    temp.Add(new Appointments
+                    {
+                        NumberZP = i,
+                        IDUser = dr.GetString("iduser"),
+                        Pacient = dr.GetString("rfio"),
+                        TimeAppomination = dr.GetString("hours") + " : " + dr.GetString("minutes"),
+                        Comment = "Коментар відсутній",// добавить коментарий при записис?
+                        NotComing = false//вытащить с базы когда добавит димас
+
+                    });
+                }
+            }
+            con.Close();
+
+            return temp;
+        }
+
+        public ObservableCollection<Users> GetUsers()
+        {
+            synhronyze.SynhronyzeTable("ekfgq_users", 1);
+
+            MySqlConnectionStringBuilder mysqlCSB;
+            mysqlCSB = new MySqlConnectionStringBuilder();
+            mysqlCSB.Server = server;
+            mysqlCSB.Database = database;
+            mysqlCSB.UserID = UserID;
+            mysqlCSB.Password = Password;
+            mysqlCSB.ConvertZeroDateTime = true;
+
+
+            MySqlConnection con = new MySqlConnection();
+            con.ConnectionString = mysqlCSB.ConnectionString;
+            MySqlCommand cmd = new MySqlCommand();
+
+            ObservableCollection<Users> temp = new ObservableCollection<Users>();
+            con.Open();
+            cmd.CommandText = "SELECT * FROM ekfgq_users";
+            cmd.Connection = con;
+            cmd.ExecuteNonQuery();
+
+
+
+            using (MySqlDataReader dr = cmd.ExecuteReader())
+            {
+                while (dr.Read())
+                {
+
+                    temp.Add(new Users
+                    {
+                        userId = dr.GetString("id"),
+                        userFIO = dr.GetString("name"),
+                        userMail = dr.GetString("email"),
+                        userPhone = dr.GetString("phone")
+
+                    });
+
+                }
+            }
+            con.Close();
+
+            return temp;
+        }
+
 
         /// <summary>
         ///  Find All Specialization  and make doctor list
         /// (Существует другой метод (с ДатаТейблом))
         /// </summary>
         /// <returns></returns>
-        public List<DoctorsList> getList()
+        public List<DoctorsList> GetDocSpecification()
         {
 
             synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprspec", 1);
@@ -840,11 +1002,11 @@ namespace VrachMedcentr
         #region GET DOCTORS TIMES
         public List<Times> getDocTimes(string docId, string docTimeId, DateTime date)
         {
-            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 1);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 1);
 
-           // synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
 
-           // synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
 
 
 
@@ -985,7 +1147,7 @@ namespace VrachMedcentr
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
 
-          //  synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
 
         }
 
@@ -1036,9 +1198,11 @@ namespace VrachMedcentr
             return result;
         }
         #endregion
+
+
         public ObservableCollection<DateTime> GetListOfWorkingDays(int _docId)
         {
-            //synhronyze.SynhronyzeTable("ekfgq_ttfsp", 1);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -1118,7 +1282,7 @@ namespace VrachMedcentr
             cmd.ExecuteNonQuery();
             con.Close();
 
-           // synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
         }
 
         public void remWorkDays(string idSpec, DateTime dttime)
@@ -1143,108 +1307,9 @@ namespace VrachMedcentr
             cmd.ExecuteNonQuery();
             con.Close();
 
-           // synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
         }
 
-        /// <summary>
-        ///  Поллучение записей на конкретную дату для выбраного доктора
-        /// </summary>
-        /// <param name="docId">ІD доктора</param>
-        /// <param name="TimeAppointments"> Дата для поиска</param>
-        /// <returns></returns>
-        public ObservableCollection<Appointments> GetAppointments(string docId, DateTime TimeAppointments)
-        {
-            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop",1);
-
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-            mysqlCSB.ConvertZeroDateTime = true;
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-
-            int i = 0;
-
-            ObservableCollection<Appointments> temp = new ObservableCollection<Appointments>();
-
-            con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_dop WHERE id_specialist = @DocID AND date = @Date";
-            cmd.Parameters.AddWithValue("@DocID", docId);
-            cmd.Parameters.AddWithValue("@Date", TimeAppointments);
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
-            using (MySqlDataReader dr = cmd.ExecuteReader())
-            {
-                while (dr.Read())
-                {
-                    i++;
-                    temp.Add(new Appointments
-                    {
-                        NumberZP = i,
-                        IDUser = dr.GetString("iduser"),
-                        Pacient = dr.GetString("rfio"),
-                        TimeAppomination = dr.GetString("hours") + " : " + dr.GetString("minutes"),
-                        Comment = "Коментар відсутній",// добавить коментарий при записис?
-                        NotComing = false//вытащить с базы когда добавит димас
-
-                    });
-                }
-            }
-            con.Close();
-
-            return temp;
-        }
-
-        public ObservableCollection<Users> GetUsers()
-        {
-            //synhronyze.SynhronyzeTable("ekfgq_users", 1);
-
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-            mysqlCSB.ConvertZeroDateTime = true;
-
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-
-            ObservableCollection<Users> temp = new ObservableCollection<Users>();
-            con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_users";
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
-
-
-
-            using (MySqlDataReader dr = cmd.ExecuteReader())
-            {
-                while (dr.Read())
-                {
-
-                    temp.Add(new Users
-                    {
-                        userId = dr.GetString("id"),
-                        userFIO = dr.GetString("name"),
-                        userMail = dr.GetString("email"),
-                        userPhone = dr.GetString("phone")
-
-                    });
-
-                }
-            }
-            con.Close();
-
-            return temp;
-        }
 
 
         #region INSERT IN TO BASE
@@ -1342,7 +1407,7 @@ namespace VrachMedcentr
 
                 }
             }
-           // synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 2);
+            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 2);
 
         }
 
@@ -1534,7 +1599,7 @@ namespace VrachMedcentr
                 }
             }
 
-          //  synhronyze.SynhronyzeTable("talon_time", 2);
+            synhronyze.SynhronyzeTable("talon_time", 2);
         }
 
         #endregion
