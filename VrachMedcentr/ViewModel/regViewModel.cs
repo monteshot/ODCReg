@@ -51,36 +51,10 @@ namespace VrachMedcentr
             ListOfSpecf = con.GetDocSpecification();
             ListOfUsers = con.GetUsers();
 
-            Users = OneTimeUsers;
-            localBD = con.get_ekfgq_ttfsp_dop();
-            siteBD = siteDB.get_ekfgq_ttfsp_dop();
-
-            try
-            {
-                foreach (var a in localBD.Rows)
-                {
-                    foreach (var b in siteBD.Rows)
-                    {
-                        if (!Equals(a, b))
-                        {
+            Users = OneTimeUsers;  
 
 
-                            //   azaza.NewRow();
-                            // azaza.Rows.Add((DataRow)a);  не робить
-                        }
-                    }
-                }
-            }
-            catch (Exception e) { MessageBox.Show(e.ToString()); }
-
-
-            localBD.AcceptChanges();
-            localBD.Merge(siteBD, true);
-
-            DataTable tempTime = localBD.GetChanges(DataRowState.Unchanged);
-
-            //  resultBD = tempTime;
-            resultBD = azaza;
+           
 
 
             // MessageBox.Show(con.getHash().ToString());

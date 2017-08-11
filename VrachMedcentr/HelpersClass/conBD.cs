@@ -68,22 +68,28 @@ namespace VrachMedcentr
 
 
 
-                con.Open();
+
                 cmd.CommandText = "CHECKSUM TABLE " + _tablename;
 
-
-                cmd.Connection = con;
-                cmd.ExecuteNonQuery();
-
-                using (MySqlDataReader dr = cmd.ExecuteReader())
+                Ping ping = new Ping();
+                PingReply PR = ping.Send(server, 5000);
+                if (PR.Status == IPStatus.Success)
                 {
-                    while (dr.Read())
+                    con.Open();
+                    cmd.Connection = con;
+                    cmd.ExecuteNonQuery();
+
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
                     {
-                        a = dr.GetString("Checksum");
+                        while (dr.Read())
+                        {
+                            a = dr.GetString("Checksum");
+                        }
                     }
-                }
-                con.Close();
+                    con.Close();
+                };
                 return a;
+
             });
 
 
@@ -161,11 +167,11 @@ namespace VrachMedcentr
             StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_dop(idrec, iduser, id_specialist, published, ordering,checked_out, checked_out_time, rfio, rphone, info, ipuser, rmail, summa,payment_status, number_order, cdate, date, hours, minutes, office_name, specializations_name, specialist_name, specialist_email,specialist_phone, order_password,office_desc, office_address, number_cabinet) VALUES ");
             List<string> Rw = new List<string>();
             List<string> Rw1 = new List<string>();
-            
+
             foreach (DataRow z in DT.Rows)
             {
                 string fg = $"(";
-                for (int i = 1; i<=29;i++)
+                for (int i = 1; i <= 29; i++)
                 {
                     if (i == 29)
                     {
@@ -175,7 +181,7 @@ namespace VrachMedcentr
                     {
                         fg = fg + "'" + MySqlHelper.EscapeString(z[i].ToString()) + "',";
                     }
-                   
+
                 }
                 fg = fg + ")";
                 Rw1.Add(fg);
@@ -567,42 +573,56 @@ namespace VrachMedcentr
         /// <param name="DT"></param>
         public void insert_ekfgq_ttfsp_sprspec(DataTable DT)
         {
-
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-
-            mysqlCSB.AllowZeroDateTime = true;
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-
-
-
-            StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_sprspec(name, published,photo,desc,off_photo,checked_out_time,ordering) VALUES ");
-            List<string> Rw = new List<string>();
-
-            foreach (DataRow z in DT.Rows)
+            try
             {
-                Rw.Add(
-                    $"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString(z[2].ToString())}'," +
-                    $"'{MySqlHelper.EscapeString(z[3].ToString())}','{MySqlHelper.EscapeString(z[4].ToString())}','{MySqlHelper.EscapeString(z[5].ToString())}'," +
-                    $"'{MySqlHelper.EscapeString(z[6].ToString())}','{MySqlHelper.EscapeString(z[7].ToString())}','{MySqlHelper.EscapeString(z[8].ToString())}')");
+
+                //return Task.Run(() =>
+                //{
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = server;
+                mysqlCSB.Database = database;
+                mysqlCSB.UserID = UserID;
+                mysqlCSB.Password = Password;
+
+                mysqlCSB.AllowZeroDateTime = true;
+
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
+
+
+
+                StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_sprspec(name, published,photo,desc,off_photo,checked_out_time,ordering) VALUES ");
+                List<string> Rw = new List<string>();
+
+                foreach (DataRow z in DT.Rows)
+                {
+                    Rw.Add(
+                        $"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString(z[2].ToString())}'," +
+                        $"'{MySqlHelper.EscapeString(z[3].ToString())}','{MySqlHelper.EscapeString(z[4].ToString())}','{MySqlHelper.EscapeString(z[5].ToString())}'," +
+                        $"'{MySqlHelper.EscapeString(z[6].ToString())}','{MySqlHelper.EscapeString(z[7].ToString())}','{MySqlHelper.EscapeString(z[8].ToString())}')");
+                }
+
+                MegaCom.Append(string.Join(",", Rw));
+                MegaCom.Append(";");
+
+                Ping ping = new Ping();
+                PingReply PR = ping.Send(server, 5000);
+
+                if (PR.Status == IPStatus.Success)
+                {
+
+                    con.Open();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = MegaCom.ToString();
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    con.Close();
+                }
+                // });
             }
-
-            MegaCom.Append(string.Join(",", Rw));
-            MegaCom.Append(";");
-
-            con.Open();
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = MegaCom.ToString();
-            cmd.ExecuteNonQuery();
-            cmd.Parameters.Clear();
-            con.Close();
+            catch { }
 
 
         }
@@ -780,9 +800,14 @@ namespace VrachMedcentr
             MySqlCommand cmd = new MySqlCommand();
 
             ObservableCollection<Users> temp = new ObservableCollection<Users>();
+
             con.Open();
             cmd.CommandText = "SELECT * FROM ekfgq_users";
             cmd.Connection = con;
+            cmd.Prepare();
+            bool t = cmd.IsPrepared;
+
+
             cmd.ExecuteNonQuery();
 
 
@@ -818,6 +843,8 @@ namespace VrachMedcentr
         {
 
             synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprspec", 1);
+
+
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();

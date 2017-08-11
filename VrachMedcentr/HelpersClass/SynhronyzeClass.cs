@@ -16,9 +16,7 @@ namespace VrachMedcentr
     {
         conBD conWeb = new conBD();
         conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
-        string TableName;
-        DataTable Web = new DataTable();
-        DataTable Local = new DataTable();
+
 
         public bool InternetConnectionStatus { get; set; }//временное решение сделать бы визуальное оповещение
         #region Synhronyza Tables
@@ -37,18 +35,20 @@ namespace VrachMedcentr
         {
 
 
-            TableName = _TableName;
+
             if (CheckConnection())
             {
                 //розкоментить для отладки
                 string WebTableHash = await conWeb.GetTableHash(_TableName);
                 string LocalTableHash = await conLocal.GetTableHash(_TableName);
 
+
                 if (WebTableHash != LocalTableHash)
                 {
-                    
-                    Web = await AsyncGetTable(conWeb);
-                    Local = await AsyncGetTable(conLocal);
+
+
+                    DataTable _Web = await AsyncGetTable(conWeb, _TableName);
+                    DataTable _Local = await AsyncGetTable(conLocal, _TableName);
 
                     //Web = GetTable(conWeb);
                     //Local = GetTable(conLocal);
@@ -56,9 +56,9 @@ namespace VrachMedcentr
 
                     //Web = con.get3apTime();
                     //Local = conLocal.get3apTime();
-                    List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
-                    List<DataRow> t1 = Web.AsEnumerable().ToList<DataRow>();
-                    Compare(_mod);
+                    List<DataRow> t = _Local.AsEnumerable().ToList<DataRow>();
+                    List<DataRow> t1 = _Web.AsEnumerable().ToList<DataRow>();
+                    await Compare(_TableName, _mod, _Local, _Web);
 
 
 
@@ -70,7 +70,7 @@ namespace VrachMedcentr
                     InternetConnectionStatus = true;
                 }
 
-               
+
             }
 
             else
@@ -86,9 +86,9 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)\r
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>
-        private async void Compare( int _mod)
+        private Task Compare(string TableName, int _mod, DataTable Local, DataTable Web)
         {
-            try
+            return Task.Run(() =>
             {
                 switch (TableName)
                 {
@@ -105,10 +105,10 @@ namespace VrachMedcentr
                                 && rl.Field<string>("minutes") == rw.Field<string>("minutes")
                                 && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                           // conLocal.insert_ekfgq_ttfsp_dop(Local);
-                             Local.Clear();
+                            // conLocal.insert_ekfgq_ttfsp_dop(Local);
+                            Local.Clear();
                         }
-                       if(_mod==2)                        
+                        if (_mod == 2)
                         {
                             Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
                                 Any(rl => rl.Field<string>("rfio") == rw.Field<string>("rfio")
@@ -117,8 +117,8 @@ namespace VrachMedcentr
                                 && rl.Field<string>("minutes") == rw.Field<string>("minutes")
                                 && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                             //conWeb.insert_ekfgq_ttfsp_dop(Local);
-                             Local.Clear();
+                            //conWeb.insert_ekfgq_ttfsp_dop(Local);
+                            Local.Clear();
                         }
                         break;
                     case "ekfgq_ttfsp":
@@ -145,13 +145,11 @@ namespace VrachMedcentr
                                 && rl.Field<string>("mntime") == rw.Field<string>("mntime"))).CopyToDataTable();
                         }
                         break;
-
-
-                    case "ekfgq_ttfsp_spec":
+                    case "ekfgq_ttfsp_sprspec":
                         if (_mod == 1)
                         {
                             Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
+                                Any(rl => rl.Field<int>("id") == rw.Field<int>("id")
                                 && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
                             conLocal.insert_ekfgq_ttfsp_sprspec(Local);
@@ -160,9 +158,29 @@ namespace VrachMedcentr
                         if (_mod == 2)
                         {
                             Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
+                                Any(rl => rl.Field<string>("id") == rw.Field<string>("id")
                                 && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
                             conWeb.insert_ekfgq_ttfsp_sprspec(Local);
+                            Local.Clear();
+                        }
+                        break;
+
+                    case "ekfgq_ttfsp_spec":
+                        if (_mod == 1)
+                        {
+                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                                Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
+                                && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
+                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+
+                            Local.Clear();
+                        }
+                        if (_mod == 2)
+                        {
+                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                                Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
+                                && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
+
                             Local.Clear();
                         }
                         break;
@@ -187,14 +205,27 @@ namespace VrachMedcentr
                     case "ekfgq_users":
                         if (_mod == 1)
                         {
-                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            try
+                            {
+                                Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                                    Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
+                                    && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
+                                List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                                conLocal.insert_ekfgq_users(Local);
+                                Local.Clear();
+                            }
+                            catch { }
+                        }
+                        if (_mod == 2)
+                        {
+                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
                                 Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
-                                && rl.Field<string>("username") == rw.Field<string>("username")
                                 && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                            await conLocal.insert_ekfgq_users(Local);
+                            conLocal.insert_ekfgq_users(Local);
                             Local.Clear();
                         }
+
                         break;
 
                     //Нужно потестить данную таблицу
@@ -215,12 +246,10 @@ namespace VrachMedcentr
                         break;
 
 
+
                 }
-            }
-            catch (InvalidOperationException e)
-            {
-                 MessageBox.Show(e.ToString());
-            }
+            });
+
 
 
 
@@ -256,7 +285,7 @@ namespace VrachMedcentr
         /// <param name="_WebTablName">Имя желаемой таблицы</param>
         /// <param name="_DBConnection">Параметры подключения(База данных локальная/веб)</param>
         /// <returns></returns>
-        private Task<DataTable> AsyncGetTable(conBD _DBConnection)
+        private Task<DataTable> AsyncGetTable(conBD _DBConnection, string TableName)
         {
 
             return Task.Run(() =>
@@ -277,13 +306,14 @@ namespace VrachMedcentr
 
                 // MessageBox.Show(con.State.ToString());
                 con.Close();
-                con.OpenAsync();
+                con.Open();
 
 
                 //MessageBox.Show(con.State.ToString());
                 cmd.CommandText = "SELECT * FROM " + TableName;
                 //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
                 cmd.Connection = con;
+                cmd.Prepare();
                 cmd.ExecuteNonQuery();
 
                 DataTable dt = new DataTable();
@@ -291,7 +321,7 @@ namespace VrachMedcentr
                 MySqlDataReader reader = cmd.ExecuteReader();
 
                 dt.Load(reader);
-                con.CloseAsync();
+
                 con.Close();
                 return dt;
 
@@ -304,49 +334,49 @@ namespace VrachMedcentr
         }
 
 
-        private DataTable GetTable(conBD _DBConnection)
-        {
+        //private DataTable GetTable(conBD _DBConnection)
+        //{
 
 
 
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = _DBConnection.server;
-            mysqlCSB.Database = _DBConnection.database;
-            mysqlCSB.UserID = _DBConnection.UserID;
-            mysqlCSB.Password = _DBConnection.Password;
-            // mysqlCSB.ConvertZeroDateTime = true;
-            mysqlCSB.AllowZeroDateTime = true;
+        //    MySqlConnectionStringBuilder mysqlCSB;
+        //    mysqlCSB = new MySqlConnectionStringBuilder();
+        //    mysqlCSB.Server = _DBConnection.server;
+        //    mysqlCSB.Database = _DBConnection.database;
+        //    mysqlCSB.UserID = _DBConnection.UserID;
+        //    mysqlCSB.Password = _DBConnection.Password;
+        //    // mysqlCSB.ConvertZeroDateTime = true;
+        //    mysqlCSB.AllowZeroDateTime = true;
 
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
+        //    MySqlConnection con = new MySqlConnection();
+        //    con.ConnectionString = mysqlCSB.ConnectionString;
+        //    MySqlCommand cmd = new MySqlCommand();
 
-            // MessageBox.Show(con.State.ToString());
-            con.Close();
-            con.OpenAsync();
-
-
-            //MessageBox.Show(con.State.ToString());
-            cmd.CommandText = "SELECT * FROM " + TableName;
-            //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
-
-            DataTable dt = new DataTable();
-
-            MySqlDataReader reader = cmd.ExecuteReader();
-
-            dt.Load(reader);
-            con.CloseAsync();
-            con.Close();
-            return dt;
+        //    // MessageBox.Show(con.State.ToString());
+        //    con.Close();
+        //    con.OpenAsync();
 
 
+        //    //MessageBox.Show(con.State.ToString());
+        //    cmd.CommandText = "SELECT * FROM " + TableName;
+        //    //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
+        //    cmd.Connection = con;
+        //    cmd.ExecuteNonQuery();
+
+        //    DataTable dt = new DataTable();
+
+        //    MySqlDataReader reader = cmd.ExecuteReader();
+
+        //    dt.Load(reader);
+        //    con.CloseAsync();
+        //    con.Close();
+        //    return dt;
 
 
 
-        }
+
+
+        //}
 
         #endregion
     }
