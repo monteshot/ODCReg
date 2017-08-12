@@ -31,7 +31,7 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>
-        public async void SynhronyzeTable(string _TableName, int _mod)
+        public  async void SynhronyzeTable(string _TableName, int _mod)
         {
 
 
@@ -290,40 +290,48 @@ namespace VrachMedcentr
 
             return Task.Run(() =>
             {
+                try
+                {
 
-                MySqlConnectionStringBuilder mysqlCSB;
-                mysqlCSB = new MySqlConnectionStringBuilder();
-                mysqlCSB.Server = _DBConnection.server;
-                mysqlCSB.Database = _DBConnection.database;
-                mysqlCSB.UserID = _DBConnection.UserID;
-                mysqlCSB.Password = _DBConnection.Password;
-                // mysqlCSB.ConvertZeroDateTime = true;
-                mysqlCSB.AllowZeroDateTime = true;
+                    MySqlConnectionStringBuilder mysqlCSB;
+                    mysqlCSB = new MySqlConnectionStringBuilder();
+                    mysqlCSB.Server = _DBConnection.server;
+                    mysqlCSB.Database = _DBConnection.database;
+                    mysqlCSB.UserID = _DBConnection.UserID;
+                    mysqlCSB.Password = _DBConnection.Password;
+                    // mysqlCSB.ConvertZeroDateTime = true;
+                    mysqlCSB.AllowZeroDateTime = true;
 
-                MySqlConnection con = new MySqlConnection();
-                con.ConnectionString = mysqlCSB.ConnectionString;
-                MySqlCommand cmd = new MySqlCommand();
+                    MySqlConnection con = new MySqlConnection();
+                    con.ConnectionString = mysqlCSB.ConnectionString;
+                    MySqlCommand cmd = new MySqlCommand();
 
-                // MessageBox.Show(con.State.ToString());
-                con.Close();
-                con.Open();
+                    // MessageBox.Show(con.State.ToString());
+                    con.Close();
+                    con.Open();
 
 
-                //MessageBox.Show(con.State.ToString());
-                cmd.CommandText = "SELECT * FROM " + TableName;
-                //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
-                cmd.Connection = con;
-                cmd.Prepare();
-                cmd.ExecuteNonQuery();
+                    //MessageBox.Show(con.State.ToString());
+                    cmd.CommandText = "SELECT * FROM " + TableName;
+                    //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
+                    cmd.Connection = con;
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
 
-                DataTable dt = new DataTable();
+                    DataTable dt = new DataTable();
 
-                MySqlDataReader reader = cmd.ExecuteReader();
+                    MySqlDataReader reader = cmd.ExecuteReader();
 
-                dt.Load(reader);
+                    dt.Load(reader);
 
-                con.Close();
-                return dt;
+                    con.Close();
+                    return dt;
+                }
+                catch
+                {
+
+                }
+                return new DataTable();
 
 
 

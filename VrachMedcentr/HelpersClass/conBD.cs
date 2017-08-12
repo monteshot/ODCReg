@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using WpfControls;
@@ -980,6 +981,7 @@ namespace VrachMedcentr
         /// <returns></returns>
         public ObservableCollection<DocNames> GetDoctorsNamesFORStartup()
         {
+            
             synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
