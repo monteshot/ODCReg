@@ -423,7 +423,7 @@ namespace VrachMedcentr
         /// Занимается инсертом в таблицу _юзверей
         /// </summary>
         /// <param name="DT"></param>
-        public void insert_ekfgq_users(DataTable DT)
+        public Task insert_ekfgq_users(DataTable DT)
         {
 
             return Task.Run(async () =>
@@ -681,8 +681,10 @@ namespace VrachMedcentr
                 MySqlCommand cmd = new MySqlCommand();
 
 
-
-                StringBuilder MegaCom = new StringBuilder("INSERT INTO ekfgq_ttfsp_sprspec(name, published, photo, offphoto, checked_out_time, ordering) VALUES ");
+                string fg = "";
+                StringBuilder MegaCom =
+                    new StringBuilder(
+                        "INSERT INTO ekfgq_ttfsp_sprspec(name, published, photo, offphoto, checked_out_time, ordering) VALUES ");
                 List<string> Rw = new List<string>();
 
                 // какаето параша с приведеньеи єтого дерьма /*'{MySqlHelper.EscapeString(z[3].ToString())}',*/ в єтом столбике  desc, 
@@ -695,29 +697,30 @@ namespace VrachMedcentr
                         $"'{MySqlHelper.EscapeString(z["checked_out_time"].ToString())}','{MySqlHelper.EscapeString(z["ordering"].ToString())}')");
                 }
 
-                    }
-                    fg = fg + ")";
-                    Rw1.Add(fg);
-                    fg = "";
-                }
-                MegaCom.Append(string.Join(",", Rw1));
+
+                fg = fg + ")";
+                Rw.Add(fg);
+                fg = "";
+
+                MegaCom.Append(string.Join(",", Rw));
                 MegaCom.Append(";");
 
 
-                con.Open();
+                await con.OpenAsync();
                 cmd.Connection = con;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = MegaCom.ToString();
                 cmd.ExecuteNonQuery();
                 cmd.Parameters.Clear();
+                await con.CloseAsync();
+            });
 
-                // });
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
+           // }
+           // catch (Exception e)
+            //{
+            //    MessageBox.Show(e.ToString());
 
-            }
+            //}
 
 
         }
