@@ -55,7 +55,8 @@ namespace VrachMedcentr
 
             Users = OneTimeUsers;  
 
-
+           // SynhronyzeClass abc =new SynhronyzeClass();
+          //  abc.SynhronyzeTable("ekfgq_ttfsp_sprtime",1);
            
 
 
