@@ -40,6 +40,7 @@ namespace VrachMedcentr
 
         #endregion
         conBD siteDB = new conBD("shostka.mysql.ukraine.com.ua", "shostka_odc", "shostka_odc", "Cpu1234Pro");
+        SynhronyzeClass synhronyze = new SynhronyzeClass();
         #region Constructor
         //
         DataTable azaza = new DataTable();
@@ -47,6 +48,7 @@ namespace VrachMedcentr
         {
             // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
             //CheckConnection();
+            synhronyze.Synhronyze();
             DateDoctorAcepting = DateTime.Today;
             ListOfSpecf = con.GetDocSpecification();
             ListOfUsers = con.GetUsers();
@@ -272,6 +274,7 @@ namespace VrachMedcentr
             set
             {
                 _SelectedDocNames = value;
+                synhronyze.Synhronyze();
                 //CheckConnection();
                 //подавляем екзепшены так как при выборе специальности DocNames становиться null
                 try

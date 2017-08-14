@@ -48,10 +48,11 @@ namespace VrachMedcentr
         #endregion
 
         #region Helpers Methods
-        public Task<string> GetTableHash(string _tablename)
+        public string GetTableHash(string _tablename)
         {
-            return Task.Run(() =>
-            {
+
+            //return Task.Run(() =>
+            //{
                 MySqlConnectionStringBuilder mysqlCSB;
                 mysqlCSB = new MySqlConnectionStringBuilder();
                 mysqlCSB.Server = server;
@@ -75,7 +76,7 @@ namespace VrachMedcentr
                 PingReply PR = ping.Send(server, 5000);
                 if (PR.Status == IPStatus.Success)
                 {
-                    con.Open();
+                    con.OpenAsync();
                     cmd.Connection = con;
                     cmd.ExecuteNonQuery();
 
@@ -86,12 +87,12 @@ namespace VrachMedcentr
                             a = dr.GetString("Checksum");
                         }
                     }
-                    con.Close();
+                    con.CloseAsync();
                 };
                 return a;
+            //});
 
-            });
-
+          
 
 
         }
@@ -737,7 +738,7 @@ namespace VrachMedcentr
         /// <returns></returns>
         public ObservableCollection<Appointments> GetAppointments(string docId, DateTime TimeAppointments)
         {
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -785,7 +786,7 @@ namespace VrachMedcentr
 
         public ObservableCollection<Users> GetUsers()
         {
-            synhronyze.SynhronyzeTable("ekfgq_users", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_users", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -842,48 +843,53 @@ namespace VrachMedcentr
         /// <returns></returns>
         public List<DoctorsList> GetDocSpecification()
         {
+            
+                //synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprspec", 1);
+                
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = server;
+                mysqlCSB.Database = database;
+                mysqlCSB.UserID = UserID;
+                mysqlCSB.Password = Password;
 
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprspec", 1);
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
 
-
-
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-
-            List<DoctorsList> temp = new List<DoctorsList>();
+                List<DoctorsList> temp = new List<DoctorsList>();
             // List<DoctorsList.DocNames> Docname1= new List<DoctorsList.DocNames>();
-
-            con.Close();
-            con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_sprspec";
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
-            using (MySqlDataReader dr = cmd.ExecuteReader())
+            try
             {
-                while (dr.Read())
+                con.Close();
+                con.Open();
+                cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_sprspec";
+                cmd.Connection = con;
+                cmd.ExecuteNonQuery();
+                using (MySqlDataReader dr = cmd.ExecuteReader())
                 {
-
-                    temp.Add(new DoctorsList
+                    while (dr.Read())
                     {
-                        specf = dr.GetString("name"),
-                        idspecf = dr.GetInt32("id")
-                        // Likar = GetDoctrosNames(dr.GetString("id"))
+
+                        temp.Add(new DoctorsList
+                        {
+                            specf = dr.GetString("name"),
+                            idspecf = dr.GetInt32("id")
+                            // Likar = GetDoctrosNames(dr.GetString("id"))
 
 
 
-                    });
+                        });
+                    }
                 }
+                con.Close();
+                // GetDoctrosNames(5);
+                return temp;
             }
-            con.Close();
-            // GetDoctrosNames(5);
+            catch(Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
             return temp;
         }
 
@@ -894,7 +900,7 @@ namespace VrachMedcentr
         /// <returns></returns>
         public ObservableCollection<DocNames> GetDoctrosNames(string specialization)
         {
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -940,7 +946,7 @@ namespace VrachMedcentr
         /// <returns></returns>
         public ObservableCollection<DocNames> GetDoctorsNamesFORStartup()
         {
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -1030,11 +1036,11 @@ namespace VrachMedcentr
         #region GET DOCTORS TIMES
         public List<Times> getDocTimes(string docId, string docTimeId, DateTime date)
         {
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 1);
 
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
 
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 1);
 
 
 
@@ -1175,7 +1181,7 @@ namespace VrachMedcentr
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
 
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
 
         }
 
@@ -1230,7 +1236,7 @@ namespace VrachMedcentr
 
         public ObservableCollection<DateTime> GetListOfWorkingDays(int _docId)
         {
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 1);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp", 1);
 
             MySqlConnectionStringBuilder mysqlCSB;
             mysqlCSB = new MySqlConnectionStringBuilder();
@@ -1310,7 +1316,7 @@ namespace VrachMedcentr
             cmd.ExecuteNonQuery();
             con.Close();
 
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
         }
 
         public void remWorkDays(string idSpec, DateTime dttime)
@@ -1335,7 +1341,7 @@ namespace VrachMedcentr
             cmd.ExecuteNonQuery();
             con.Close();
 
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
+            //synhronyze.SynhronyzeTable("ekfgq_ttfsp", 2);
         }
 
 
@@ -1435,7 +1441,7 @@ namespace VrachMedcentr
 
                 }
             }
-            synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 2);
+           // synhronyze.SynhronyzeTable("ekfgq_ttfsp_dop", 2);
 
         }
 
@@ -1627,7 +1633,7 @@ namespace VrachMedcentr
                 }
             }
 
-            synhronyze.SynhronyzeTable("talon_time", 2);
+           // synhronyze.SynhronyzeTable("talon_time", 2);
         }
 
         #endregion

@@ -216,7 +216,7 @@
 
 
                 </Grid.ColumnDefinitions>
-                <Grid Margin="5,0,0,0" Grid.Column="2" Grid.Row="1">
+                <Grid Margin="5,0,0,0" Grid.Column="2" Grid.Row="1" DataContext ="{Binding SynhronyzeClass}" >
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -224,7 +224,7 @@
                         <RowDefinition/>
 
                             </Grid.RowDefinitions>
-                    <Button Command="{Binding Test}"></Button>
+                    <Button Command="{Binding Test}" Content="{Binding TextTest}"></Button>
                             <!--<TextBlock FontSize="15" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Text="Підсумковий результат:" FontWeight="Bold"/>
                             <StackPanel Grid.Row="1" Orientation="Vertical">
                                 <TextBlock FontSize="15" TextAlignment="Left" VerticalAlignment="Center" Text="Лікар:" />

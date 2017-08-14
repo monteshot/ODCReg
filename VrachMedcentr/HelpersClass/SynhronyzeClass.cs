@@ -12,7 +12,7 @@ using System.Windows;
 
 namespace VrachMedcentr
 {
-    class SynhronyzeClass : conBD
+    class SynhronyzeClass 
     {
         conBD conWeb = new conBD();
         conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
@@ -20,6 +20,35 @@ namespace VrachMedcentr
 
         public bool InternetConnectionStatus { get; set; }//временное решение сделать бы визуальное оповещение
         #region Synhronyza Tables
+        public string TextTest { get; set; }
+        public async void Synhronyze()
+        {
+            try
+            {
+                TextTest = "Start";
+                int a = 1;
+                await SynhronyzeTable("ekfgq_ttfsp_dop", 1);
+                await SynhronyzeTable("ekfgq_users", 1);
+                await SynhronyzeTable("ekfgq_ttfsp_sprspec", 1);
+                await SynhronyzeTable("ekfgq_ttfsp_spec", 1);
+                await SynhronyzeTable("ekfgq_ttfsp_spec", 1);
+                await SynhronyzeTable("ekfgq_ttfsp", 1);
+                await SynhronyzeTable("ekfgq_ttfsp_sprtime", 1);
+                await SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
+                await SynhronyzeTable("ekfgq_ttfsp", 1);
+                await SynhronyzeTable("ekfgq_ttfsp", 2);
+                Task.WaitAll();
+                TextTest = "end";
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+
+            int i = 0;
+
+        }
+
 
         /// <summary>
         /// Функция синхронизации данных в дата тейблах базы данных
@@ -30,53 +59,56 @@ namespace VrachMedcentr
         /// <param name="_mod">
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
-        /// </param>
-        public async void SynhronyzeTable(string _TableName, int _mod)
+        /// </param>    
+        private  Task SynhronyzeTable(string _TableName, int _mod)
         {
 
-
-
-            if (CheckConnection())
+            return  Task.Run(async() =>
             {
-                //розкоментить для отладки
-                string WebTableHash = await conWeb.GetTableHash(_TableName);
-                string LocalTableHash = await conLocal.GetTableHash(_TableName);
 
-
-                if (WebTableHash != LocalTableHash)
+                if (CheckConnection())
                 {
+                    //розкоментить для отладки
+                    string WebTableHash =  conWeb.GetTableHash(_TableName);
+                    string LocalTableHash =  conLocal.GetTableHash(_TableName);
+
+                   
+                    if (WebTableHash != LocalTableHash)
+                    {
 
 
-                    DataTable _Web = await AsyncGetTable(conWeb, _TableName);
-                    DataTable _Local = await AsyncGetTable(conLocal, _TableName);
-
-                    //Web = GetTable(conWeb);
-                    //Local = GetTable(conLocal);
-
-
-                    //Web = con.get3apTime();
-                    //Local = conLocal.get3apTime();
-                    List<DataRow> t = _Local.AsEnumerable().ToList<DataRow>();
-                    List<DataRow> t1 = _Web.AsEnumerable().ToList<DataRow>();
-                    await Compare(_TableName, _mod, _Local, _Web);
+                        DataTable _Web = await AsyncGetTable(conWeb, _TableName);
+                        DataTable _Local = await AsyncGetTable(conLocal, _TableName);
+                       
+                        //Web = GetTable(conWeb);
+                        //Local = GetTable(conLocal);
 
 
+                        //Web = con.get3apTime();
+                        //Local = conLocal.get3apTime();
+                        List<DataRow> t = _Local.AsEnumerable().ToList<DataRow>();
+                        List<DataRow> t1 = _Web.AsEnumerable().ToList<DataRow>();
+                        Compare(_TableName, _mod, _Local, _Web);
 
-                    //foreach (var a in t)
-                    //{
-                    //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
-                    //}
-                    int i = 0;//маркер точки останова
-                    InternetConnectionStatus = true;
+
+
+                        //foreach (var a in t)
+                        //{
+                        //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
+                        //}
+                        int i = 0;//маркер точки останова
+                        InternetConnectionStatus = true;
+                    }
+
+
                 }
 
+                else
+                {
+                    InternetConnectionStatus = false;
+                }
+            });
 
-            }
-
-            else
-            {
-                InternetConnectionStatus = false;
-            }
         }
 
         /// <summary>
@@ -86,10 +118,9 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)\r
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>
-        private Task Compare(string TableName, int _mod, DataTable Local, DataTable Web)
+        private void  Compare(string TableName, int _mod, DataTable Local, DataTable Web)
         {
-            return Task.Run(() =>
-            {
+           
                 switch (TableName)
                 {
 
@@ -248,8 +279,7 @@ namespace VrachMedcentr
 
 
                 }
-            });
-
+          
 
 
 
@@ -288,32 +318,31 @@ namespace VrachMedcentr
         private Task<DataTable> AsyncGetTable(conBD _DBConnection, string TableName)
         {
 
-            return Task.Run(() =>
+            return Task.Run(async() =>
             {
-
                 MySqlConnectionStringBuilder mysqlCSB;
                 mysqlCSB = new MySqlConnectionStringBuilder();
                 mysqlCSB.Server = _DBConnection.server;
                 mysqlCSB.Database = _DBConnection.database;
                 mysqlCSB.UserID = _DBConnection.UserID;
                 mysqlCSB.Password = _DBConnection.Password;
-                // mysqlCSB.ConvertZeroDateTime = true;
-                mysqlCSB.AllowZeroDateTime = true;
+               // mysqlCSB.ConvertZeroDateTime = true;
+               mysqlCSB.AllowZeroDateTime = true;
 
                 MySqlConnection con = new MySqlConnection();
                 con.ConnectionString = mysqlCSB.ConnectionString;
                 MySqlCommand cmd = new MySqlCommand();
 
-                // MessageBox.Show(con.State.ToString());
-                con.Close();
-                con.Open();
+               // MessageBox.Show(con.State.ToString());
+              
+               await con.OpenAsync();
 
 
-                //MessageBox.Show(con.State.ToString());
-                cmd.CommandText = "SELECT * FROM " + TableName;
-                //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
-                cmd.Connection = con;
-                cmd.Prepare();
+               //MessageBox.Show(con.State.ToString());
+               cmd.CommandText = "SELECT * FROM " + TableName;
+               //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
+               cmd.Connection = con;
+               // cmd.Prepare();
                 cmd.ExecuteNonQuery();
 
                 DataTable dt = new DataTable();
@@ -322,13 +351,12 @@ namespace VrachMedcentr
 
                 dt.Load(reader);
 
-                con.Close();
+                await con.CloseAsync();
                 return dt;
 
-
-
-
             });
+
+
 
 
         }
