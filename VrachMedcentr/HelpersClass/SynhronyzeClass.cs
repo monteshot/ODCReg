@@ -13,7 +13,7 @@ using System.Windows;
 using System.Reflection;
 namespace VrachMedcentr
 {
-    class SynhronyzeClass 
+    class SynhronyzeClass
     {
         conBD conWeb = new conBD();
         conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
@@ -21,12 +21,13 @@ namespace VrachMedcentr
 
         public bool InternetConnectionStatus { get; set; }//временное решение сделать бы визуальное оповещение
         #region Synhronyza Tables
-        public string TextTest { get; set; }
+        public string TextTest { get; set; } = "fasgagag";
         public async void Synhronyze()
         {
+            TextTest = "Start";
             try
             {
-                TextTest = "Start";
+                
                 int a = 1;
                 await SynhronyzeTable("ekfgq_ttfsp_dop", 1);
                 await SynhronyzeTable("ekfgq_users", 1);
@@ -41,7 +42,7 @@ namespace VrachMedcentr
                 Task.WaitAll();
                 TextTest = "end";
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
             }
@@ -61,26 +62,26 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>    
-        private  Task SynhronyzeTable(string _TableName, int _mod)
+        private Task SynhronyzeTable(string _TableName, int _mod)
         {
 
-            return  Task.Run(async() =>
-            {
+            return Task.Run(async () =>
+           {
 
-                if (CheckConnection())
-                {
+               if (CheckConnection())
+               {
                     //розкоментить для отладки
-                    string WebTableHash =  conWeb.GetTableHash(_TableName);
-                    string LocalTableHash =  conLocal.GetTableHash(_TableName);
-
-                   
-                    if (WebTableHash != LocalTableHash)
-                    {
+                    string WebTableHash =   conWeb.GetTableHash(_TableName);
+                   string LocalTableHash =  conLocal.GetTableHash(_TableName);
 
 
-                        DataTable _Web = await AsyncGetTable(conWeb, _TableName);
-                        DataTable _Local = await AsyncGetTable(conLocal, _TableName);
-                       
+                   if (WebTableHash != LocalTableHash)
+                   {
+
+
+                       DataTable _Web = await AsyncGetTable(conWeb, _TableName);
+                       DataTable _Local = await AsyncGetTable(conLocal, _TableName);
+
                         //Web = GetTable(conWeb);
                         //Local = GetTable(conLocal);
 
@@ -88,8 +89,8 @@ namespace VrachMedcentr
                         //Web = con.get3apTime();
                         //Local = conLocal.get3apTime();
                         List<DataRow> t = _Local.AsEnumerable().ToList<DataRow>();
-                        List<DataRow> t1 = _Web.AsEnumerable().ToList<DataRow>();
-                        Compare(_TableName, _mod, _Local, _Web);
+                       List<DataRow> t1 = _Web.AsEnumerable().ToList<DataRow>();
+                       Compare(_TableName, _mod, _Local, _Web);
 
 
 
@@ -99,16 +100,16 @@ namespace VrachMedcentr
                         //}
                         int i = 0;//маркер точки останова
                         InternetConnectionStatus = true;
-                    }
+                   }
 
 
-                }
+               }
 
-                else
-                {
-                    InternetConnectionStatus = false;
-                }
-            });
+               else
+               {
+                   InternetConnectionStatus = false;
+               }
+           });
 
         }
 
@@ -119,168 +120,172 @@ namespace VrachMedcentr
         /// 1-найти розличия между локальной и веб базами(простыми словами нахождение в веб базе того чего не хватает в локальной)\r
         /// 2-найти розличия между веб и локальной базами(простыми словами нахождение в локальной базе того чего не хватает в веб)
         /// </param>
-        private void  Compare(string TableName, int _mod, DataTable Local, DataTable Web)
+        private void Compare(string TableName, int _mod, DataTable Local, DataTable Web)
         {
-           
-                switch (TableName)
-                {
 
-                    case "ekfgq_ttfsp_dop":
-                        if (_mod == 1)
-                        {
-                            //        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                            //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
-                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<string>("rfio") == rw.Field<string>("rfio")
-                                && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime()
-                                && rl.Field<string>("hours") == rw.Field<string>("hours")
-                                && rl.Field<string>("minutes") == rw.Field<string>("minutes")
-                                && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
-                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                            // conLocal.insert_ekfgq_ttfsp_dop(Local);
-                            Local.Clear();
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<string>("rfio") == rw.Field<string>("rfio")
-                                && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime()
-                                && rl.Field<string>("hours") == rw.Field<string>("hours")
-                                && rl.Field<string>("minutes") == rw.Field<string>("minutes")
-                                && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
-                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                            //conWeb.insert_ekfgq_ttfsp_dop(Local);
-                            Local.Clear();
-                        }
-                        break;
-                    case "ekfgq_ttfsp":
-                        if (_mod == 1)
-                        {
-                            //        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                            //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
-                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<int>("idspec") == rw.Field<int>("idspec")
-                                && rl.Field<int>("id") == rw.Field<int>("id")
-                                && rl.Field<int>("iduser") == rw.Field<int>("iduser")
-                                && rl.Field<MySqlDateTime>("dttime").GetDateTime() == rw.Field<MySqlDateTime>("dttime").GetDateTime()
-                                && rl.Field<string>("hrtime") == rw.Field<string>("hrtime")
-                                && rl.Field<string>("mntime") == rw.Field<string>("mntime"))).CopyToDataTable();
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<int>("idspec") == rw.Field<int>("idspec")
-                                && rl.Field<int>("id") == rw.Field<int>("id")
-                                && rl.Field<int>("iduser") == rw.Field<int>("iduser")
-                                && rl.Field<MySqlDateTime>("dttime").GetDateTime() == rw.Field<MySqlDateTime>("dttime").GetDateTime()
-                                && rl.Field<string>("hrtime") == rw.Field<string>("hrtime")
-                                && rl.Field<string>("mntime") == rw.Field<string>("mntime"))).CopyToDataTable();
-                        }
-                        break;
-                    case "ekfgq_ttfsp_sprspec":
-                        if (_mod == 1)
-                        {
-                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<int>("id") == rw.Field<int>("id")
-                                && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
-                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                            conLocal.insert_ekfgq_ttfsp_sprspec(Local);
-                            Local.Clear();
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<string>("id") == rw.Field<string>("id")
-                                && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
-                            conWeb.insert_ekfgq_ttfsp_sprspec(Local);
-                            Local.Clear();
-                        }
-                        break;
+            switch (TableName)
+            {
 
-                    case "ekfgq_ttfsp_spec":
-                        if (_mod == 1)
+                case "ekfgq_ttfsp_dop":
+                    if (_mod == 1)
+                    {
+                        //        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                        //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            Any(rl => rl.Field<string>("rfio") == rw.Field<string>("rfio")
+                            && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime()
+                            && rl.Field<string>("hours") == rw.Field<string>("hours")
+                            && rl.Field<string>("minutes") == rw.Field<string>("minutes")
+                            && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
+                        List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                        // conLocal.insert_ekfgq_ttfsp_dop(Local);
+                        Local.Clear();
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<string>("rfio") == rw.Field<string>("rfio")
+                            && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime()
+                            && rl.Field<string>("hours") == rw.Field<string>("hours")
+                            && rl.Field<string>("minutes") == rw.Field<string>("minutes")
+                            && rl.Field<string>("specializations_name") == rw.Field<string>("specializations_name"))).CopyToDataTable();
+                        List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                        //conWeb.insert_ekfgq_ttfsp_dop(Local);
+                        Local.Clear();
+                    }
+                    break;
+                case "ekfgq_ttfsp":
+                    if (_mod == 1)
+                    {
+                        //        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                        //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            Any(rl => rl.Field<int>("idspec") == rw.Field<int>("idspec")
+                            && rl.Field<int>("id") == rw.Field<int>("id")
+                            && rl.Field<int>("iduser") == rw.Field<int>("iduser")
+                            && rl.Field<MySqlDateTime>("dttime").GetDateTime() == rw.Field<MySqlDateTime>("dttime").GetDateTime()
+                            && rl.Field<string>("hrtime") == rw.Field<string>("hrtime")
+                            && rl.Field<string>("mntime") == rw.Field<string>("mntime"))).CopyToDataTable();
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<int>("idspec") == rw.Field<int>("idspec")
+                            && rl.Field<int>("id") == rw.Field<int>("id")
+                            && rl.Field<int>("iduser") == rw.Field<int>("iduser")
+                            && rl.Field<MySqlDateTime>("dttime").GetDateTime() == rw.Field<MySqlDateTime>("dttime").GetDateTime()
+                            && rl.Field<string>("hrtime") == rw.Field<string>("hrtime")
+                            && rl.Field<string>("mntime") == rw.Field<string>("mntime"))).CopyToDataTable();
+                    }
+                    break;
+                //работает косяки читай внутриinsert_ekfgq_ttfsp_sprspec
+                case "ekfgq_ttfsp_sprspec":
+                    if (_mod == 1)
+                    {
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            Any(rl => rl.Field<int>("id") == rw.Field<int>("id")
+                            && rl.Field<string>("name") == rw.Field<string>("name")
+                            && rl.Field<string>("desc") == rw.Field<string>("desc")
+                            )).CopyToDataTable();
+                        List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                        conLocal.insert_ekfgq_ttfsp_sprspec(Local);
+                        Local.Clear();
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<string>("id") == rw.Field<string>("id")
+                            && rl.Field<string>("name") == rw.Field<string>("name") 
+                            && rl.Field<string>("desc") == rw.Field<string>("desc"))).CopyToDataTable();
+                        conWeb.insert_ekfgq_ttfsp_sprspec(Local);
+                        Local.Clear();
+                    }
+                    break;
+                    //где запрос лебовски?
+                case "ekfgq_ttfsp_spec":
+                    if (_mod == 1)
+                    {
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
+                            && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
+                        List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                        
+                        Local.Clear();
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
+                            && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
+
+                        Local.Clear();
+                    }
+                    break;
+                case "ekfgq_ttfsp_sprtime":
+                    if (_mod == 1)
+                    {
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
+                            && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
+                        //conLocal.insert_ekfgq_ttfsp_sprtime(Local);
+                        //Local.Clear();
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
+                            && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
+                        //conWeb.insert_ekfgq_ttfsp_sprtime(Local);
+                        //Local.Clear();
+                    }
+                    break;
+                case "ekfgq_users":
+                    if (_mod == 1)
+                    {
+                        try
                         {
                             Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
-                                && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
-                            List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-
-                            Local.Clear();
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<string>("idsprspec") == rw.Field<string>("idsprspec")
-                                && rl.Field<string>("name") == rw.Field<string>("name"))).CopyToDataTable();
-
-                            Local.Clear();
-                        }
-                        break;
-                    case "ekfgq_ttfsp_sprtime":
-                        if (_mod == 1)
-                        {
-                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
-                                && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
-                            //conLocal.insert_ekfgq_ttfsp_sprtime(Local);
-                            //Local.Clear();
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
-                                && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
-                            //conWeb.insert_ekfgq_ttfsp_sprtime(Local);
-                            //Local.Clear();
-                        }
-                        break;
-                    case "ekfgq_users":
-                        if (_mod == 1)
-                        {
-                            try
-                            {
-                                Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                    Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
-                                    && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
-                                List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
-                                conLocal.insert_ekfgq_users(Local);
-                                Local.Clear();
-                            }
-                            catch { }
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
                                 Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
                                 && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
                             List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
                             conLocal.insert_ekfgq_users(Local);
                             Local.Clear();
                         }
+                        catch { }
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
+                            && rl.Field<string>("username") == rw.Field<string>("username"))).CopyToDataTable();
+                        List<DataRow> t0 = Local.AsEnumerable().ToList<DataRow>();
+                        conLocal.insert_ekfgq_users(Local);
+                        Local.Clear();
+                    }
 
-                        break;
+                    break;
 
-                    //Нужно потестить данную таблицу
-                    case "talon_time":
-                        if (_mod == 1)
-                        {
-                            Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                                Any(rl => rl.Field<int>("doctor_id") == rw.Field<int>("doctor_id")
-                                && rl.Field<int>("parametr") == rw.Field<int>("parametr"))).CopyToDataTable();
-                        }
-                        if (_mod == 2)
-                        {
-                            Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
-                                Any(rl => rl.Field<int>("doctor_id") == rw.Field<int>("doctor_id")
-                                && rl.Field<int>("parametr") == rw.Field<int>("parametr"))).CopyToDataTable();
-                        }
+                //Нужно потестить данную таблицу
+                case "talon_time":
+                    if (_mod == 1)
+                    {
+                        Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
+                            Any(rl => rl.Field<int>("doctor_id") == rw.Field<int>("doctor_id")
+                            && rl.Field<int>("parametr") == rw.Field<int>("parametr"))).CopyToDataTable();
+                    }
+                    if (_mod == 2)
+                    {
+                        Local = Local.AsEnumerable().Where(rw => !Web.AsEnumerable().
+                            Any(rl => rl.Field<int>("doctor_id") == rw.Field<int>("doctor_id")
+                            && rl.Field<int>("parametr") == rw.Field<int>("parametr"))).CopyToDataTable();
+                    }
 
-                        break;
+                    break;
 
 
 
-                }
-          
+            }
+
 
 
 
@@ -319,7 +324,7 @@ namespace VrachMedcentr
         private Task<DataTable> AsyncGetTable(conBD _DBConnection, string TableName)
         {
 
-            return Task.Run(async() =>
+            return Task.Run(async () =>
             {
                 MySqlConnectionStringBuilder mysqlCSB;
                 mysqlCSB = new MySqlConnectionStringBuilder();
@@ -327,23 +332,25 @@ namespace VrachMedcentr
                 mysqlCSB.Database = _DBConnection.database;
                 mysqlCSB.UserID = _DBConnection.UserID;
                 mysqlCSB.Password = _DBConnection.Password;
-               // mysqlCSB.ConvertZeroDateTime = true;
-               mysqlCSB.AllowZeroDateTime = true;
+                // mysqlCSB.ConvertZeroDateTime = true;
+                mysqlCSB.AllowZeroDateTime = true;
 
                 MySqlConnection con = new MySqlConnection();
                 con.ConnectionString = mysqlCSB.ConnectionString;
                 MySqlCommand cmd = new MySqlCommand();
 
-               // MessageBox.Show(con.State.ToString());
+                // MessageBox.Show(con.State.ToString());
+
+
               
-               await con.OpenAsync();
+                await con.OpenAsync();
 
 
-               //MessageBox.Show(con.State.ToString());
-               cmd.CommandText = "SELECT * FROM " + TableName;
-               //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
-               cmd.Connection = con;
-               // cmd.Prepare();
+                //MessageBox.Show(con.State.ToString());
+                cmd.CommandText = "SELECT * FROM " + TableName;
+                //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
+                cmd.Connection = con;
+                // cmd.Prepare();
                 cmd.ExecuteNonQuery();
 
                 DataTable dt = new DataTable();
@@ -360,52 +367,7 @@ namespace VrachMedcentr
 
 
 
-        }
-
-
-        //private DataTable GetTable(conBD _DBConnection)
-        //{
-
-
-
-        //    MySqlConnectionStringBuilder mysqlCSB;
-        //    mysqlCSB = new MySqlConnectionStringBuilder();
-        //    mysqlCSB.Server = _DBConnection.server;
-        //    mysqlCSB.Database = _DBConnection.database;
-        //    mysqlCSB.UserID = _DBConnection.UserID;
-        //    mysqlCSB.Password = _DBConnection.Password;
-        //    // mysqlCSB.ConvertZeroDateTime = true;
-        //    mysqlCSB.AllowZeroDateTime = true;
-
-        //    MySqlConnection con = new MySqlConnection();
-        //    con.ConnectionString = mysqlCSB.ConnectionString;
-        //    MySqlCommand cmd = new MySqlCommand();
-
-        //    // MessageBox.Show(con.State.ToString());
-        //    con.Close();
-        //    con.OpenAsync();
-
-
-        //    //MessageBox.Show(con.State.ToString());
-        //    cmd.CommandText = "SELECT * FROM " + TableName;
-        //    //cmd.Parameters.AddWithValue("@TableName", _WebTablName);
-        //    cmd.Connection = con;
-        //    cmd.ExecuteNonQuery();
-
-        //    DataTable dt = new DataTable();
-
-        //    MySqlDataReader reader = cmd.ExecuteReader();
-
-        //    dt.Load(reader);
-        //    con.CloseAsync();
-        //    con.Close();
-        //    return dt;
-
-
-
-
-
-        //}
+        }        
 
         #endregion
     }
