@@ -320,6 +320,7 @@ namespace VrachMedcentr
         conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
         #endregion
 
+       
 
         //public regViewModel()
         //{

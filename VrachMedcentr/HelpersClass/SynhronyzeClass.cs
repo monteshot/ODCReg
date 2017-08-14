@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Reflection;
 namespace VrachMedcentr
 {
     class SynhronyzeClass 
@@ -293,7 +294,7 @@ namespace VrachMedcentr
             IPStatus status = IPStatus.Unknown;
             try
             {
-                status = new Ping().Send("google.ru").Status;
+                status = new Ping().Send("google.com.ua").Status;
             }
             catch { }
 
