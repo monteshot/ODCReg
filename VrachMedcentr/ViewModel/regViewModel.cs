@@ -318,10 +318,11 @@ namespace VrachMedcentr
 
         #region Helpers object
         //conBD con = new conBD();
-        conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+              conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+       // conBD con = new conBD("localhost", "shostka_medcen", "root", "monteshot");
         #endregion
 
-       
+
 
         //public regViewModel()
         //{

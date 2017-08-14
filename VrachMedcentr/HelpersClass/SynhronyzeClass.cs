@@ -16,8 +16,8 @@ namespace VrachMedcentr
     class SynhronyzeClass
     {
         conBD conWeb = new conBD();
-        conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
-
+         conBD conLocal = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+     //   conBD conLocal = new conBD("localhost", "shostka_medcen", "root", "monteshot");
 
         public bool InternetConnectionStatus { get; set; }//временное решение сделать бы визуальное оповещение
         #region Synhronyza Tables
