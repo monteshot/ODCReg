@@ -578,43 +578,48 @@ namespace VrachMedcentr
 
            });
         }
-        public void update_ekfgq_ttfsp_sprtime(DataTable DT)
+        public Task update_ekfgq_ttfsp_sprtime(DataTable DT)
         {
+            return Task.Run(async () =>
+            {
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = server;
+                mysqlCSB.Database = database;
+                mysqlCSB.UserID = UserID;
+                mysqlCSB.Password = Password;
 
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
+                mysqlCSB.AllowZeroDateTime = true;
 
-            mysqlCSB.AllowZeroDateTime = true;
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
+                StringBuilder MegaCom=null;
+                await con.OpenAsync();
+                foreach (DataRow z in DT.Rows)
+                {
+                    MegaCom = new StringBuilder("UPDATE ekfgq_ttfsp_sprtime(name, published,desc,timehm,checked_out,checked_out_time,ordering,timeprv) SET " + $"('{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}')" + "WHERE id=" + z[8].ToString());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = MegaCom.ToString();
+                    cmd.ExecuteNonQuery();
+                 
+                }
+                await con.CloseAsync();
+                // List<string> Rw = new List<string>();
 
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
+                //foreach (DataRowCollection z in DT.Rows)
+                //{
+                //    Rw.Add(
+                //        $"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}')");
+                //}
+
+                //MegaCom.Append(string.Join(",", Rw));
+                //MegaCom.Append(";");
 
 
 
-            StringBuilder MegaCom = new StringBuilder("UPDATE ekfgq_ttfsp_sprtime(name, published,desc,timehm,checked_out,checked_out_time,ordering,timeprv) SET " + $"('{DT.Columns[1].ToString()}','{DT.Columns[2].ToString()}','{DT.Columns[3].ToString()}','{DT.Columns[4].ToString()}','{DT.Columns[5].ToString()}','{DT.Columns[6].ToString()}','{DT.Columns[7].ToString()}','{DT.Columns[8].ToString()}')" + "WHERE id=" + DT.Columns[8].ToString());
-            // List<string> Rw = new List<string>();
 
-            //foreach (DataRowCollection z in DT.Rows)
-            //{
-            //    Rw.Add(
-            //        $"('{z[0].ToString()}','{z[1].ToString()}','{z[2].ToString()}','{z[3].ToString()}','{z[4].ToString()}','{z[5].ToString()}','{z[6].ToString()}','{z[7].ToString()}','{z[8].ToString()}')");
-            //}
-
-            //MegaCom.Append(string.Join(",", Rw));
-            //MegaCom.Append(";");
-
-            con.Open();
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = MegaCom.ToString();
-            cmd.ExecuteNonQuery();
-            cmd.Parameters.Clear();
-            con.Close();
-
+            });
 
         }
 

@@ -42,16 +42,16 @@ namespace VrachMedcentr
                 //розкоментить для отладки
                 //string WebTableHash;
                 //string LocalTableHash;
-                
+
                 var dispatcher = Application.Current.MainWindow.Dispatcher;
-              
-               // WebTableHash= await dispatcher.BeginInvoke(new AddTableHashDelegate(conWeb.GetTableHash));
-                  string WebTableHash = await conWeb.GetTableHash(_TableName);
-                 string LocalTableHash = await conLocal.GetTableHash(_TableName);
-                AddTableHashDelegate web=new AddTableHashDelegate(conWeb.GetTableHash);
+
+                // WebTableHash= await dispatcher.BeginInvoke(new AddTableHashDelegate(conWeb.GetTableHash));
+                string WebTableHash = await conWeb.GetTableHash(_TableName);
+                string LocalTableHash = await conLocal.GetTableHash(_TableName);
+                AddTableHashDelegate web = new AddTableHashDelegate(conWeb.GetTableHash);
                 AddTableHashDelegate local = new AddTableHashDelegate(conLocal.GetTableHash);
 
-                await  web.Invoke(_TableName);
+                await web.Invoke(_TableName);
                 await local.Invoke(_TableName);
                 //z.BeginInvoke(_TableName);
 
@@ -202,7 +202,8 @@ namespace VrachMedcentr
                             Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
                                 Any(rl => rl.Field<string>("name") == rw.Field<string>("name")
                                 && rl.Field<string>("timehm") == rw.Field<string>("timehm"))).CopyToDataTable();
-                            //conLocal.insert_ekfgq_ttfsp_sprtime(Local);
+                            //   conLocal.insert_ekfgq_ttfsp_sprtime(Local);
+                            conLocal.update_ekfgq_ttfsp_sprtime(Local);
                             //Local.Clear();
                         }
                         if (_mod == 2)
