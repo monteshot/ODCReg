@@ -44,6 +44,8 @@ namespace VrachMedcentr
         #region Constructor
         //
         DataTable azaza = new DataTable();
+        conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+        // conBD con = new conBD("localhost", "shostka_medcen", "root", "monteshot");
         public regViewModel()
         {
             // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
@@ -55,8 +57,8 @@ namespace VrachMedcentr
 
             Users = OneTimeUsers;  
 
-           // SynhronyzeClass abc =new SynhronyzeClass();
-          //  abc.SynhronyzeTable("ekfgq_ttfsp_sprtime",1);
+          
+            synhronyze.SynhronyzeTable("talon_time", 1);
            
 
 
@@ -318,8 +320,7 @@ namespace VrachMedcentr
 
         #region Helpers object
         //conBD con = new conBD();
-              conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
-       // conBD con = new conBD("localhost", "shostka_medcen", "root", "monteshot");
+       
         #endregion
 
 
