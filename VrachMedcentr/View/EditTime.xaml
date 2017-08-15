@@ -33,7 +33,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
-                            <TextBlock Padding="5" FontSize="15">На сайті/в регістратурі</TextBlock>
+                            <TextBlock Padding="5" FontSize="15">В регістратурі/На сайті</TextBlock>
                             <CheckBox UseLayoutRounding="True" Style="{DynamicResource CheckBoxSwitcher}" Padding="5" IsChecked="{Binding PublickPrivate}"></CheckBox>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Column="1">

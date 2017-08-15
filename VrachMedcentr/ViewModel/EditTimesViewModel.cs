@@ -14,7 +14,7 @@ namespace VrachMedcentr
     {
         #region Public variables
 
-        public List<Times> docTimes { get; set; }
+        public ObservableCollection<Times> docTimes { get; set; }
         public ObservableCollection<DocNames> docBool { get; set; }
         public DocNames docSelected { get; set; }
         public Times SelectedTime { get; set; }
@@ -25,8 +25,8 @@ namespace VrachMedcentr
         #region Halpers object
 
 
-        conBD con = new conBD();
-
+        conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+        SynhronyzeClass sync = new SynhronyzeClass();
         #endregion
 
 
@@ -59,13 +59,13 @@ namespace VrachMedcentr
                               //    permitToBase = false;
                               //    break;
                               //}
-                              if (a.Label == "") { continue; }
+                              if (a.Time == "") { continue; }
                               if (a.PublickPrivate == true)
                               {
 
-                                  z += a.Label + "\r";
+                                  z += a.Time + "\r";
 
-                                  if (a.Label == null || a.Label == "")
+                                  if (a.Time == null || a.Time == "")
                                   {
                                       z = z.Substring(0, z.Length - 1);
                                   }
@@ -73,21 +73,31 @@ namespace VrachMedcentr
                               else
                               {
 
-                                  prive += a.Label + "\r";
+                                  prive += a.Time + "\r";
 
-                                  if (a.Label == null || a.Label == "")
+                                  if (a.Time == null || a.Time == "")
                                   {
                                       prive = prive.Substring(0, z.Length - 1);
                                   }
                               }
 
                           }
+                          if (permitToBase == true)
+                          {
+                              con.updateCurr(z, prive, docSelected.docTimeId);
+                              MessageBox.Show("Розклад лікаря " + docSelected.docName + " змінено", "Розклад змінено", MessageBoxButton.OK, MessageBoxImage.Question);
+                          }
+                          else
+                          {
+                              MessageBox.Show("Розклад лікаря " + docSelected.docName + " НЕ змінено.\nПеревірте правильність данних та спробуйте ще раз", "Помилка", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                          }
+                         
                       }
                       catch
                       {
                           MessageBox.Show("Перевірте пральність введення данних");
                       }
-                      
+                      sync.SynhronyzeTable("ekfgq_ttfsp_sprtime", 2);
                       //Проверка на наличие времени
                       //if (prive != "" && prive != null)
                       //{
@@ -98,15 +108,6 @@ namespace VrachMedcentr
                       //    z = z.Substring(0, z.Length - 1);
                       //}
 
-                      if (permitToBase == true)
-                      {
-                          con.updateCurr(z, prive, docSelected.docTimeId);
-                          MessageBox.Show("Розклад лікаря " + docSelected.docName + " змінено", "Розклад змінено", MessageBoxButton.OK, MessageBoxImage.Question);
-                      }
-                      else
-                      {
-                          MessageBox.Show("Розклад лікаря " + docSelected.docName + " НЕ змінено.\nПеревірте правильність данних та спробуйте ще раз", "Помилка", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                      }
 
 
 
@@ -128,8 +129,9 @@ namespace VrachMedcentr
                   (_addTimes = new RelayCommand(obj =>
                   {
 
-                      docTimes.Add(new Times { Label = "" });
-                      NotifyPropertyChanged();
+                      docTimes.Add(new Times { Time="12:00", Label = "12:00" });
+                      NotifyPropertyChanged("docTimes");
+                     
 
 
                   }));
