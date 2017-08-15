@@ -714,15 +714,16 @@ namespace VrachMedcentr
                 cmd.Parameters.Clear();
                 con.Close();
 
-           // }
-           // catch (Exception e)
-            //{
-            //    MessageBox.Show(e.ToString());
+                // }
+                // catch (Exception e)
+                //{
+                //    MessageBox.Show(e.ToString());
 
-            //}
+                //}
 
 
-        }
+            });
+            }
         /// <summary>
         /// Метод загрузки "талон/время" параметров
         /// </summary>
