@@ -655,6 +655,7 @@ namespace VrachMedcentr
                 cmd.CommandText = MegaCom.ToString();
                 cmd.ExecuteNonQuery();
                 cmd.Parameters.Clear();
+                con.Close();
 
                 // });
             }
@@ -825,50 +826,60 @@ namespace VrachMedcentr
         public ObservableCollection<Users> GetUsers()
         {
             //synhronyze.SynhronyzeTable("ekfgq_users", 1);
-
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-            mysqlCSB.ConvertZeroDateTime = true;
-
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-
             ObservableCollection<Users> temp = new ObservableCollection<Users>();
-
-            con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_users";
-            cmd.Connection = con;
-            cmd.Prepare();
-            bool t = cmd.IsPrepared;
-
-
-            cmd.ExecuteNonQuery();
-
-
-
-            using (MySqlDataReader dr = cmd.ExecuteReader())
+            try
             {
-                while (dr.Read())
+
+                MySqlConnectionStringBuilder mysqlCSB;
+                mysqlCSB = new MySqlConnectionStringBuilder();
+                mysqlCSB.Server = server;
+                mysqlCSB.Database = database;
+                mysqlCSB.UserID = UserID;
+                mysqlCSB.Password = Password;
+                mysqlCSB.ConvertZeroDateTime = true;
+
+
+                MySqlConnection con = new MySqlConnection();
+                con.ConnectionString = mysqlCSB.ConnectionString;
+                MySqlCommand cmd = new MySqlCommand();
+
+
+
+                con.Open();
+                cmd.CommandText = "SELECT * FROM ekfgq_users";
+                cmd.Connection = con;
+                cmd.Prepare();
+                bool t = cmd.IsPrepared;
+
+
+                cmd.ExecuteNonQuery();
+
+
+
+                using (MySqlDataReader dr = cmd.ExecuteReader())
                 {
-
-                    temp.Add(new Users
+                    while (dr.Read())
                     {
-                        userId = dr.GetString("id"),
-                        userFIO = dr.GetString("name"),
-                        userMail = dr.GetString("email"),
-                        userPhone = dr.GetString("phone")
 
-                    });
+                        temp.Add(new Users
+                        {
+                            userId = dr.GetString("id"),
+                            userFIO = dr.GetString("name"),
+                            userMail = dr.GetString("email"),
+                            userPhone = dr.GetString("phone")
 
+                        });
+
+                    }
                 }
+                con.Close();
+
+
             }
-            con.Close();
+            catch
+            {
+                temp = GetUsers();
+            }
 
             return temp;
         }
@@ -899,32 +910,31 @@ namespace VrachMedcentr
             // List<DoctorsList.DocNames> Docname1= new List<DoctorsList.DocNames>();
             try
             {
-                if (con.State != ConnectionState.Open)
+
+                con.Open();
+                cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_sprspec";
+                cmd.Connection = con;
+                cmd.ExecuteNonQuery();
+                using (MySqlDataReader dr = cmd.ExecuteReader())
                 {
-                    con.Open();
-                    cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_sprspec";
-                    cmd.Connection = con;
-                    cmd.ExecuteNonQuery();
-                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    while (dr.Read())
                     {
-                        while (dr.Read())
+
+                        temp.Add(new DoctorsList
                         {
-
-                            temp.Add(new DoctorsList
-                            {
-                                specf = dr.GetString("name"),
-                                idspecf = dr.GetInt32("id")
-                                // Likar = GetDoctrosNames(dr.GetString("id"))
+                            specf = dr.GetString("name"),
+                            idspecf = dr.GetInt32("id")
+                            // Likar = GetDoctrosNames(dr.GetString("id"))
 
 
 
-                            });
-                        }
+                        });
                     }
-                    con.Close();
-                    // GetDoctrosNames(5);
-                    return temp;
                 }
+                con.Close();
+                // GetDoctrosNames(5);
+                return temp;
+
             }
             catch (Exception e)
             {
@@ -968,7 +978,7 @@ namespace VrachMedcentr
 
                         docName = dr.GetString("name"),
                         docID = dr.GetString("id"),
-                        docBool = GetDocTimeTalonStatus(Convert.ToInt32(dr.GetString("id"))),
+                        // docBool = GetDocTimeTalonStatus(Convert.ToInt32(dr.GetString("id"))),
                         docEmail = dr.GetString("specmail"),
                         docTimeId = dr.GetString("idsprtime"),
                         docCab = dr.GetString("number_cabinet")
@@ -978,99 +988,80 @@ namespace VrachMedcentr
                 }
             }
             con.Close();
-            return temp;
-        }
-        /// <summary>
-        /// Метод для старого проекта
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<DocNames> GetDoctorsNamesFORStartup()
-        {
-            //synhronyze.SynhronyzeTable("ekfgq_ttfsp_spec", 1);
 
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
-
-
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-            ObservableCollection<DocNames> temp = new ObservableCollection<DocNames>();
-            //   DocNames temp1 = new DocNames();
             con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_spec";//',9,'
-
+            cmd.CommandText = "SELECT * FROM talon_time";
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
-            using (MySqlDataReader dr = cmd.ExecuteReader())
-            {
-                while (dr.Read())
-                {
-                    temp.Add(new DocNames
-                    {
+            DataTable dt = new DataTable();
 
-                        docName = dr.GetString("name"),
-                        docID = dr.GetString("id"),
-                        docBool = GetDocTimeTalonStatus(Convert.ToInt32(dr.GetString("id"))),
-                        docEmail = dr.GetString("specmail"),
-                        docTimeId = dr.GetString("idsprtime"),
-                        docCab = dr.GetString("number_cabinet")
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dt.Load(reader);
 
-
-                    });
-                }
-            }
             con.Close();
+            foreach (var a in temp)
+            {
+                var currentdoc = dt.AsEnumerable().Single(row => row.Field<int>("doctor_id") == Convert.ToInt32(a.docID));
+
+
+                var param = currentdoc.Field<int>("parametr");
+                if (param == 0)
+                {
+                    a.docBool = false;
+                }
+                else
+                {
+                    a.docBool = true;
+                }
+
+            }
             return temp;
         }
 
-        public bool GetDocTimeTalonStatus(int _docid)
-        {
 
-            //очень часто вызываеться нужно подумать нужно ли
+        //public bool GetDocTimeTalonStatus(int _docid)
+        //{
 
-            //synhronyze.SynhronyzeTable("talon_time", 1);
+        //    //очень часто вызываеться нужно подумать нужно ли
 
-            //synhronyze.SynhronyzeTable("talon_time", 2);
+        //    //synhronyze.SynhronyzeTable("talon_time", 1);
 
-            MySqlConnectionStringBuilder mysqlCSB;
-            mysqlCSB = new MySqlConnectionStringBuilder();
-            mysqlCSB.Server = server;
-            mysqlCSB.Database = database;
-            mysqlCSB.UserID = UserID;
-            mysqlCSB.Password = Password;
+        //    //synhronyze.SynhronyzeTable("talon_time", 2);
+
+        //    MySqlConnectionStringBuilder mysqlCSB;
+        //    mysqlCSB = new MySqlConnectionStringBuilder();
+        //    mysqlCSB.Server = server;
+        //    mysqlCSB.Database = database;
+        //    mysqlCSB.UserID = UserID;
+        //    mysqlCSB.Password = Password;
 
 
-            MySqlConnection con = new MySqlConnection();
-            con.ConnectionString = mysqlCSB.ConnectionString;
-            MySqlCommand cmd = new MySqlCommand();
-            bool parametr = false;
-            con.Open();
-            cmd.CommandText = "SELECT * FROM talon_time WHERE doctor_id = @IDSpecialist";//',9,'
-            cmd.Parameters.AddWithValue("@IDSpecialist", _docid);
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
-            using (MySqlDataReader dr = cmd.ExecuteReader())
-            {
-                while (dr.Read())
-                {
-                    if (dr.GetInt32("parametr") == 0)
-                    {
-                        parametr = false;
-                    }
-                    else
-                    {
-                        parametr = true;
-                    }
-                }
-            }
-            con.Close();
-            return parametr;
-        }
+        //    MySqlConnection con = new MySqlConnection();
+        //    con.ConnectionString = mysqlCSB.ConnectionString;
+        //    MySqlCommand cmd = new MySqlCommand();
+        //    bool parametr = false;
+        //    con.Open();
+        //    cmd.CommandText = "SELECT * FROM talon_time WHERE doctor_id = @IDSpecialist";//',9,'
+        //    cmd.Parameters.AddWithValue("@IDSpecialist", _docid);
+        //    cmd.Connection = con;
+        //    cmd.ExecuteNonQuery();
+        //    using (MySqlDataReader dr = cmd.ExecuteReader())
+        //    {
+        //        while (dr.Read())
+        //        {
+        //            if (dr.GetInt32("parametr") == 0)
+        //            {
+        //                parametr = false;
+        //            }
+        //            else
+        //            {
+        //                parametr = true;
+        //            }
+        //        }
+        //    }
+        //    con.Close();
+        //    return parametr;
+        //}
         #endregion
 
         #region GET DOCTORS TIMES
@@ -1102,8 +1093,9 @@ namespace VrachMedcentr
 
 
             con.Open();
-            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_sprtime WHERE id = @docId";//',9,'
+            cmd.CommandText = "SELECT * FROM ekfgq_ttfsp_sprtime  WHERE id = @docId";//',9,'
             cmd.Parameters.AddWithValue("@docId", docTimeId);
+
             cmd.Connection = con;
             cmd.ExecuteNonQuery();
             using (MySqlDataReader dr = cmd.ExecuteReader())
@@ -1117,9 +1109,10 @@ namespace VrachMedcentr
 
                 }
             }
-
-
+            cmd.Parameters.Clear();
             con.Close();
+
+
 
 
 

@@ -224,7 +224,20 @@
                         <RowDefinition/>
 
                             </Grid.RowDefinitions>
-                    <Button Command="{Binding Test}" Content="{Binding TextTest}"></Button>
+                    <Button Command="{Binding Test}">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Grid x:Name="controlLayout">
+                                    <Ellipse x:Name="buttonSurface" Fill="LightBlue" Stroke="Black" StrokeThickness="2">                                       
+                                    </Ellipse>
+                                    <Label x:Name="buttonCaption" VerticalAlignment="Center"
+						       HorizontalAlignment="Center"
+							   FontWeight="Bold" FontSize="20" Content="{Binding TextTest}"></Label>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <TextBlock Grid.Row="1" Text="{Binding TextTest}"></TextBlock>
                             <!--<TextBlock FontSize="15" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Text="Підсумковий результат:" FontWeight="Bold"/>
                             <StackPanel Grid.Row="1" Orientation="Vertical">
                                 <TextBlock FontSize="15" TextAlignment="Left" VerticalAlignment="Center" Text="Лікар:" />
@@ -338,7 +351,7 @@
                 </Grid>
 
             </Grid>
-            <ListBox Grid.Row="1"  SelectedItem="{Binding SSelectedUser,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding Appointments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+            <ListBox Grid.Row="1" Margin="0,5,5,0"  SelectedItem="{Binding SSelectedUser,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding Appointments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                 <ListBox.Template>
                     <ControlTemplate>
                         <DockPanel LastChildFill="True"  >

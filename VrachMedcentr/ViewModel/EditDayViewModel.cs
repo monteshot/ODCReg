@@ -16,7 +16,8 @@ namespace VrachMedcentr
         public DocNames docSelected { get; set; }
         public ObservableCollection<Times> docTimes { get; set; }
         public ObservableCollection<DateTime> WorkDays { get; set; }
-        conBD con = new conBD();
+        conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+        SynhronyzeClass sync = new SynhronyzeClass();
         List<DateTime> selectedDaysCal = new List<DateTime>();
 
         private RelayCommand _setSelectedDays;
@@ -69,7 +70,9 @@ namespace VrachMedcentr
                       catch (Exception) { }
 
                       editDays edDays = new editDays();
-                      edDays.Close();
+                      sync.SynhronyzeTable("ekfgq_ttfsp", 2);
+               
+                edDays.Close();
 
                   }));
             }
@@ -104,11 +107,13 @@ namespace VrachMedcentr
                               //   }
                           }
                           WorkDays = con.GetListOfWorkingDays(Convert.ToInt32(docSelected.docID));
+                          sync.SynhronyzeTable("ekfgq_ttfsp", 2);
                       }
                       catch (Exception) { }
 
                       editDays edDays = new editDays();
                       edDays.Close();
+
 
                   }));
             }

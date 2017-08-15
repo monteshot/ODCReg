@@ -40,7 +40,9 @@ namespace VrachMedcentr
 
         #endregion
         conBD siteDB = new conBD("shostka.mysql.ukraine.com.ua", "shostka_odc", "shostka_odc", "Cpu1234Pro");
-        SynhronyzeClass synhronyze = new SynhronyzeClass();
+
+        conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+        public SynhronyzeClass synhronyze { get; set; } = new SynhronyzeClass();
         #region Constructor
         //
         DataTable azaza = new DataTable();
@@ -48,7 +50,7 @@ namespace VrachMedcentr
         {
             // KARTA = new CardPageOne { Name = "aaaaaaaaaa", Sername = "bbbbbbbbbbb" };
             //CheckConnection();
-            synhronyze.Synhronyze();
+            synhronyze.SynhronyzeAll();
             DateDoctorAcepting = DateTime.Today;
             ListOfSpecf = con.GetDocSpecification();
             ListOfUsers = con.GetUsers();
@@ -274,7 +276,7 @@ namespace VrachMedcentr
             set
             {
                 _SelectedDocNames = value;
-                synhronyze.Synhronyze();
+                //synhronyze.SynhronyzeAll();
                 //CheckConnection();
                 //подавляем екзепшены так как при выборе специальности DocNames становиться null
                 try
@@ -284,7 +286,7 @@ namespace VrachMedcentr
                     //Otemp = con.GetListOfWorkingDays(Convert.ToInt32(value.docID));
                     if (con.CheckDoctorList(SelectedDocNames.docTimeId))
                     {
-                        TimeHour = con.GetDocTimeTalonStatus(Convert.ToInt32(value.docID));
+                        TimeHour = value.docBool;
                         RefreshDocTimes();
                     }
                     else
@@ -317,7 +319,7 @@ namespace VrachMedcentr
 
         #region Helpers object
         //conBD con = new conBD();
-        conBD con = new conBD("shostka.mysql.ukraine.com.ua", "shostka_medcen", "shostka_medcen", "n5t7jzqv");
+      
         #endregion
 
        
@@ -500,10 +502,10 @@ namespace VrachMedcentr
                 DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
                 foreach (var a in DoctorTimes)
                 {
-                    BackUPdocTimes.Add(new Times { Label = a.Label, Status = a.Status });
+                    BackUPdocTimes.Add(a);
                 }
 
-                VMEditTime.docTimes = DoctorTimes;
+                VMEditTime.docTimes = BackUPdocTimes;
                 //DoctorTimes = VMEditTime.temperory;
 
             }
@@ -511,34 +513,12 @@ namespace VrachMedcentr
             try { TimeEditing.ShowDialog(); }
             catch { }
 
-            //следующая команда срабатывает после закрытия диалогового окна
-            // СУПЕР КОСТЫЛЬ СДЕЛАТЬ БЫ ПОЛЮДСКИ (роботает по принцыпу -  строчка выполняеться после того как закрлось окно редактирвоанья)
-            // сделать бы нормлаьную передачу данных и команд между формами.
+            ////следующая команда срабатывает после закрытия диалогового окна
+            //// СУПЕР КОСТЫЛЬ СДЕЛАТЬ БЫ ПОЛЮДСКИ (роботает по принцыпу -  строчка выполняеться после того как закрлось окно редактирвоанья)
+            //// сделать бы нормлаьную передачу данных и команд между формами.
             try
             {
-                WorkingDays = con.GetListOfWorkingDays(Convert.ToInt32(SelectedDocNames.docID));
-
-                if (con.CheckDoctorList(SelectedDocNames.docTimeId))
-                {
-                    if (SelectedDocNames.docTimeId == "0" || WorkingDays.Contains(DateDoctorAcepting) == false)
-                    {
-
-                        DoctorTimes = new List<Times>();
-                        DoctorTimes.Add(new Times { Label = "Не робочий день", Status = "Red" });
-                    }
-                    else
-                    {
-                        DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
-                    }
-                }
-                else
-                {
-                    DoctorTimes = null;
-
-                }
-
-                TimeHour = SelectedDocNames.docBool;
-                //DoctorTimes = con.getDocTimes(SelectedDocNames.docID, SelectedDocNames.docTimeId, DateDoctorAcepting);
+                RefreshDocTimes();
             }
             catch (Exception) { }
         }
@@ -732,51 +712,7 @@ namespace VrachMedcentr
                   }));
             }
         }
-        private RelayCommand _test;
-        public RelayCommand Test
-        {
-            get
-            {
-                return _test ??
-                  (_test = new RelayCommand(obj =>
-                  {
-                      //МЕТОД РАЗ(полностью оттестил логика понятна но медленно так как листы)
-
-                      //ObservableCollection<Appointments> LocalAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
-                      //ObservableCollection<Appointments> WebAppoinments = new ObservableCollection<VrachMedcentr.Appointments>();
-                      //WebAppoinments = con.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
-                      //LocalAppoinments = conLocal.GetAppointments(SelectedDocNames.docID, DateDoctorAcepting);
-
-                      //var result = WebAppoinments.Where(p => LocalAppoinments.Any(l => l.IDUser != p.IDUser && l.Pacient != p.Pacient));
-
-                      //List<Appointments> temp = result.ToList<Appointments>();
-
-                      //МЕТОД ДВА(поидее самый быстры но нада оттестить логику)
-
-                      //DataTable Web = new DataTable();
-                      //DataTable Local = new DataTable();
-
-                      //Web = con.get3apTime();
-                      //Local = conLocal.get3apTime();
-
-                      //  Local = Web.AsEnumerable().Where(rw => !Local.AsEnumerable().
-                      //Any(rl => rl.Field<int>("id") == rw.Field<int>("id") && rl.Field<MySqlDateTime>("date").GetDateTime() == rw.Field<MySqlDateTime>("date").GetDateTime())).CopyToDataTable();
-
-                      //List<DataRow> t = Local.AsEnumerable().ToList<DataRow>();
-
-                      //foreach(var a in t)
-                      //{
-                      //    DateTime temp = a.Field<MySqlDateTime>("date").GetDateTime();
-                      //}
-
-                      //SynhronyzeClass test = new SynhronyzeClass();
-                      //test.SynhronyzeTable("ekfgq_ttfsp", 2);
-
-
-                      int i = 0;
-                  }));
-            }
-        }
+       
 
 
         #endregion
