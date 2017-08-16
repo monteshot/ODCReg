@@ -672,10 +672,15 @@ namespace VrachMedcentr
             con.Open();
             foreach (DataRow z in DT.Rows)
             {
-                MegaCom = new StringBuilder("UPDATE talon_time SET " + $"('{MySqlHelper.EscapeString(z[1].ToString())}','{MySqlHelper.EscapeString (z[2].ToString())}')" + " WHERE id=" + MySqlHelper.EscapeString(z[0].ToString()));
+             string   MegaCom1 = "UPDATE talon_time SET doctor_id='"+z[1].ToString()+"', parametr='"+z[2].ToString()+"' WHERE id='"+z[0].ToString()+"'";
+ 
+                //cmd.Parameters.AddWithValue("@doctor_id",z[1].ToString());
+                //cmd.Parameters.AddWithValue("@parametr", z[2].ToString());
+                //cmd.Parameters.AddWithValue("@id", z[0].ToString());
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = MegaCom.ToString();
+                cmd.CommandText = MegaCom1.ToString();
                 cmd.ExecuteNonQuery();
+                MegaCom1 = "";  
 
             }
             con.Close();
