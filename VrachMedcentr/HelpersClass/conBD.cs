@@ -327,7 +327,7 @@ namespace VrachMedcentr
         /// <param name="DT"></param>
         public Task insert_ekfgq_ttfsp(DataTable DT)
         {
-            //ПЕРЕДЕЛАТЬ НА АПДЕЙТ ИНСЕРТ
+            
             return Task.Run(async () =>
             {
                 MySqlConnectionStringBuilder mysqlCSB;
@@ -543,7 +543,7 @@ namespace VrachMedcentr
 
                foreach (DataRow z in DT.Rows)
                {
-                   //дороботать
+                  
                    string fg = $"(";
                    for (int i = 1; i <= DT.Rows.Count - 1; i++)
                    {
